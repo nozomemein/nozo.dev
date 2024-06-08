@@ -11,14 +11,23 @@ export default function Home() {
           Hello, I&apos;m nozomemein, a passionate software engineer.
         </TypographyP>
         <TypographyP>
-          I enjoy building solutions and continuously learning to improve my craft.
+          I enjoy building solutions and continuously learning to improve my
+          craft.
         </TypographyP>
       </div>
       <div className="flex flex-row item-start gap-4">
-        <Link href="https://x.com/nozomi9821" target="_blank" className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center">
+        <Link
+          href="https://x.com/nozomi9821"
+          target="_blank"
+          className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
+        >
           Twitter/X
         </Link>
-        <Link href="https://github.com/nozomemein" target="_blank" className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center">
+        <Link
+          href="https://github.com/nozomemein"
+          target="_blank"
+          className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
+        >
           GitHub
         </Link>
       </div>
