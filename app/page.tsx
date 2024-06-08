@@ -8,7 +8,7 @@ export default function Home() {
         Hello, I&apos;m nozomemein, a passionate software engineer.
       </TypographyP>
       <TypographyP>
-        I thrive on creating elegant solutions and crafting beautiful code.
+        I enjoy building solutions and continuously learning to improve my craft.
       </TypographyP>
     </main>
   );
