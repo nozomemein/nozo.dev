@@ -4,7 +4,7 @@ import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 const SITE_NAME = "My Blog";
 
-// export const dynamicParams = false;
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getAllSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
