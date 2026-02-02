@@ -10,6 +10,7 @@ export type PostFrontmatter = {
   date: string;
   tags?: string[];
   ogImage?: string;
+  status?: "draft" | "published";
 };
 
 export type PostSummary = { slug: string; frontmatter: PostFrontmatter };
@@ -53,6 +54,15 @@ function assertFrontmatter(
     throw new Error(`Invalid frontmatter \"ogImage\" in ${slug}`);
   }
 
+  const status = data.status;
+  if (
+    typeof status !== "undefined" &&
+    status !== "draft" &&
+    status !== "published"
+  ) {
+    throw new Error(`Invalid frontmatter \"status\" in ${slug}`);
+  }
+
   const date = data.date as string;
   if (Number.isNaN(Date.parse(date))) {
     throw new Error(`Invalid frontmatter \"date\" in ${slug}`);
@@ -64,13 +74,16 @@ function assertFrontmatter(
     date,
     tags: tags as string[] | undefined,
     ogImage: ogImage as string | undefined,
+    status: status as "draft" | "published" | undefined,
   };
 }
 
-export function getAllSlugs(): string[] {
+export function getAllSlugs(options?: { includeDrafts?: boolean }): string[] {
   if (!fs.existsSync(BLOG_DIR)) {
     return [];
   }
+
+  const includeDrafts = options?.includeDrafts ?? false;
 
   return fs
     .readdirSync(BLOG_DIR, { withFileTypes: true })
@@ -78,22 +91,34 @@ export function getAllSlugs(): string[] {
     .map((entry) => entry.name)
     .filter((name) => name.endsWith(".mdx"))
     .filter((name) => !name.startsWith("_"))
-    .map((name) => name.replace(/\.mdx$/, ""));
+    .map((name) => name.replace(/\.mdx$/, ""))
+    .filter((slug) => {
+      if (includeDrafts) {
+        return true;
+      }
+      const { frontmatter } = getPostBySlug(slug, { includeDrafts: true });
+      return frontmatter.status !== "draft";
+    });
 }
 
-export function getAllPosts(): PostSummary[] {
-  return getAllSlugs()
+export function getAllPosts(options?: { includeDrafts?: boolean }): PostSummary[] {
+  const includeDrafts = options?.includeDrafts ?? false;
+  return getAllSlugs({ includeDrafts })
     .map((slug) => {
-      const { frontmatter } = getPostBySlug(slug);
+      const { frontmatter } = getPostBySlug(slug, { includeDrafts: true });
       return { slug, frontmatter };
     })
+    .filter((post) => includeDrafts || post.frontmatter.status !== "draft")
     .sort(
       (a, b) =>
         Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date)
     );
 }
 
-export function getPostBySlug(slug: string): PostDetail {
+export function getPostBySlug(
+  slug: string,
+  options?: { includeDrafts?: boolean }
+): PostDetail {
   const filePath = getPostFilePath(slug);
   if (!fs.existsSync(filePath)) {
     throw new Error(`Post not found: ${slug}`);
@@ -102,6 +127,11 @@ export function getPostBySlug(slug: string): PostDetail {
   const raw = fs.readFileSync(filePath, "utf8");
   const { content, data } = matter(raw);
   const frontmatter = assertFrontmatter(data, slug);
+  const includeDrafts = options?.includeDrafts ?? false;
+
+  if (!includeDrafts && frontmatter.status === "draft") {
+    throw new Error(`Post is draft: ${slug}`);
+  }
 
   return { slug, frontmatter, content };
 }
