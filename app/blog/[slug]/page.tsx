@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { notFound } from "next/navigation";
 import { getAllSlugs, getPostBySlug } from "@/lib/posts";
-import { useMDXComponents } from "@/mdx-components";
 
 const SITE_NAME = "My Blog";
 
@@ -9,12 +8,17 @@ export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const { frontmatter } = getPostBySlug(params.slug);
+  params: Promise<{ slug?: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  if (!slug) {
+    notFound();
+  }
+
+  const { frontmatter } = getPostBySlug(slug);
   const title = `${frontmatter.title} | ${SITE_NAME}`;
   const description = frontmatter.description;
   const images = frontmatter.ogImage ? [frontmatter.ogImage] : undefined;
@@ -36,13 +40,18 @@ export function generateMetadata({
   };
 }
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug?: string }>;
 }) {
-  const { frontmatter, content } = getPostBySlug(params.slug);
-  const components = useMDXComponents({});
+  const { slug } = await params;
+  if (!slug) {
+    notFound();
+  }
+
+  const { frontmatter } = getPostBySlug(slug);
+  const { default: Post } = await import(`@/content/blog/${slug}.mdx`);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
@@ -66,7 +75,7 @@ export default function BlogPostPage({
         </header>
 
         <div className="space-y-6">
-          <MDXRemote source={content} components={components} />
+          <Post />
         </div>
       </article>
     </main>
