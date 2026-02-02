@@ -4,29 +4,18 @@ import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 const SITE_NAME = "My Blog";
 
-export const dynamicParams = false;
+// export const dynamicParams = false;
 
-export async function generateStaticParams() {
-  const slugs = getAllSlugs();
-  const params = await Promise.all(
-    slugs.map(async (slug) => {
-      const { frontmatter } = await getPostModule(slug);
-      return frontmatter.status === "draft" ? null : { slug };
-    })
-  );
-
-  return params.filter((item): item is { slug: string } => item !== null);
+export function generateStaticParams() {
+  return getAllSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug?: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  if (!slug) {
-    notFound();
-  }
 
   const { frontmatter } = await getPostModule(slug);
   if (frontmatter.status === "draft") {
@@ -58,12 +47,9 @@ export async function generateMetadata({
 export default async function BlogPostPage({
   params,
 }: {
-  params: Promise<{ slug?: string }>;
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  if (!slug) {
-    notFound();
-  }
 
   const { frontmatter, Component: Post } = await getPostModule(slug);
   if (frontmatter.status === "draft") {

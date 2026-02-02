@@ -31,6 +31,22 @@ const REQUIRED_FIELDS: Array<keyof PostFrontmatter> = [
   "date",
 ];
 
+function getFrontmatterStatusFromFile(filePath: string) {
+  const raw = fs.readFileSync(filePath, "utf8");
+  const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*/);
+  if (!match) {
+    return undefined;
+  }
+
+  const frontmatter = match[1];
+  const statusMatch = frontmatter.match(
+    /^status:\s*(?:"([^"]+)"|'([^']+)'|([^\s#]+))\s*$/m
+  );
+  const value = statusMatch?.[1] ?? statusMatch?.[2] ?? statusMatch?.[3];
+
+  return value === "draft" || value === "published" ? value : undefined;
+}
+
 function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
   if (!data || typeof data !== "object") {
     throw new Error(`Missing frontmatter export in ${slug}`);
@@ -87,12 +103,21 @@ export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
     return [];
   }
 
+  const includeDrafts = _options?.includeDrafts ?? false;
+
   return fs
     .readdirSync(BLOG_DIR, { withFileTypes: true })
     .filter((entry) => entry.isFile())
     .map((entry) => entry.name)
     .filter((name) => name.endsWith(".mdx"))
     .filter((name) => !name.startsWith("_"))
+    .filter((name) => {
+      if (includeDrafts) {
+        return true;
+      }
+      const status = getFrontmatterStatusFromFile(path.join(BLOG_DIR, name));
+      return status !== "draft";
+    })
     .map((name) => name.replace(/\.mdx$/, ""));
 }
 
