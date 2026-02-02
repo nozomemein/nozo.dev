@@ -1,17 +1,23 @@
-import createMDX from '@next/mdx'
+import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export", // Configure `pageExtensions` to include markdown and MDX files
-  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  output: "export",
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+
+  // もし入ってたら、これは OFF 推奨（pluginが効かない/挙動が違うことがある）
+  // experimental: { mdxRs: true },
 };
 
-
-
 const withMDX = createMDX({
-  // Add markdown plugins here, as desired
   extension: /\.(md|mdx)$/,
-})
- 
-// Merge MDX config with Next.js config
-export default withMDX(nextConfig)
+  options: {
+    remarkPlugins: [
+      'remark-frontmatter',
+      ['remark-mdx-frontmatter', { name: "frontmatter" }],
+    ],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);
