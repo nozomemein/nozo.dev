@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getAllPosts } from "@/lib/posts";
 
-export default function BlogIndexPage() {
-  const posts = getAllPosts();
+export default async function BlogIndexPage() {
+  const posts = await getAllPosts();
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
@@ -35,7 +35,10 @@ export default function BlogIndexPage() {
                     <span aria-hidden="true">•</span>
                   ) : null}
                   {post.frontmatter.tags?.map((tag) => (
-                    <span key={tag} className="rounded-full bg-neutral-100 px-2 py-0.5">
+                    <span
+                      key={tag}
+                      className="rounded-full bg-neutral-100 px-2 py-0.5"
+                    >
                       #{tag}
                     </span>
                   ))}

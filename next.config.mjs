@@ -10,8 +10,8 @@ const withMDX = createMDX({
   extension: /\.(md|mdx)$/,
   options: {
     remarkPlugins: [
-      'remark-frontmatter',
-      ['remark-mdx-frontmatter', { name: "frontmatter" }],
+      "remark-frontmatter",
+      ["remark-mdx-frontmatter", { name: "frontmatter" }],
     ],
     rehypePlugins: [],
   },

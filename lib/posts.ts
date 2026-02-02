@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
+import type { ComponentType } from "react";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -14,10 +14,15 @@ export type PostFrontmatter = {
 };
 
 export type PostSummary = { slug: string; frontmatter: PostFrontmatter };
-export type PostDetail = {
+export type PostModule = {
   slug: string;
   frontmatter: PostFrontmatter;
-  content: string;
+  Component: ComponentType;
+};
+
+type MdxModule = {
+  default?: ComponentType;
+  frontmatter?: unknown;
 };
 
 const REQUIRED_FIELDS: Array<keyof PostFrontmatter> = [
@@ -26,22 +31,21 @@ const REQUIRED_FIELDS: Array<keyof PostFrontmatter> = [
   "date",
 ];
 
-function getPostFilePath(slug: string) {
-  return path.join(BLOG_DIR, `${slug}.mdx`);
-}
+function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
+  if (!data || typeof data !== "object") {
+    throw new Error(`Missing frontmatter export in ${slug}`);
+  }
 
-function assertFrontmatter(
-  data: Record<string, unknown>,
-  slug: string
-): PostFrontmatter {
+  const frontmatter = data as Record<string, unknown>;
+
   for (const field of REQUIRED_FIELDS) {
-    const value = data[field];
+    const value = frontmatter[field];
     if (typeof value !== "string" || value.trim().length === 0) {
       throw new Error(`Missing required frontmatter \"${field}\" in ${slug}`);
     }
   }
 
-  const tags = data.tags;
+  const tags = frontmatter.tags;
   if (
     typeof tags !== "undefined" &&
     (!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string"))
@@ -49,12 +53,12 @@ function assertFrontmatter(
     throw new Error(`Invalid frontmatter \"tags\" in ${slug}`);
   }
 
-  const ogImage = data.ogImage;
+  const ogImage = frontmatter.ogImage;
   if (typeof ogImage !== "undefined" && typeof ogImage !== "string") {
     throw new Error(`Invalid frontmatter \"ogImage\" in ${slug}`);
   }
 
-  const status = data.status;
+  const status = frontmatter.status;
   if (
     typeof status !== "undefined" &&
     status !== "draft" &&
@@ -63,14 +67,14 @@ function assertFrontmatter(
     throw new Error(`Invalid frontmatter \"status\" in ${slug}`);
   }
 
-  const date = data.date as string;
+  const date = frontmatter.date as string;
   if (Number.isNaN(Date.parse(date))) {
     throw new Error(`Invalid frontmatter \"date\" in ${slug}`);
   }
 
   return {
-    title: data.title as string,
-    description: data.description as string,
+    title: frontmatter.title as string,
+    description: frontmatter.description as string,
     date,
     tags: tags as string[] | undefined,
     ogImage: ogImage as string | undefined,
@@ -78,12 +82,10 @@ function assertFrontmatter(
   };
 }
 
-export function getAllSlugs(options?: { includeDrafts?: boolean }): string[] {
+export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
   if (!fs.existsSync(BLOG_DIR)) {
     return [];
   }
-
-  const includeDrafts = options?.includeDrafts ?? false;
 
   return fs
     .readdirSync(BLOG_DIR, { withFileTypes: true })
@@ -91,47 +93,47 @@ export function getAllSlugs(options?: { includeDrafts?: boolean }): string[] {
     .map((entry) => entry.name)
     .filter((name) => name.endsWith(".mdx"))
     .filter((name) => !name.startsWith("_"))
-    .map((name) => name.replace(/\.mdx$/, ""))
-    .filter((slug) => {
-      if (includeDrafts) {
-        return true;
-      }
-      const { frontmatter } = getPostBySlug(slug, { includeDrafts: true });
-      return frontmatter.status !== "draft";
-    });
+    .map((name) => name.replace(/\.mdx$/, ""));
 }
 
-export function getAllPosts(options?: { includeDrafts?: boolean }): PostSummary[] {
+export async function getPostModule(slug: string): Promise<PostModule> {
+  let mod: MdxModule;
+
+  try {
+    mod = (await import(`@/content/blog/${slug}.mdx`)) as MdxModule;
+  } catch (error) {
+    throw new Error(`Post not found: ${slug}`);
+  }
+
+  if (!mod.default) {
+    throw new Error(`Missing default export in ${slug}`);
+  }
+
+  const frontmatter = assertFrontmatter(mod.frontmatter, slug);
+
+  return {
+    slug,
+    frontmatter,
+    Component: mod.default,
+  };
+}
+
+export async function getAllPosts(options?: {
+  includeDrafts?: boolean;
+}): Promise<PostSummary[]> {
   const includeDrafts = options?.includeDrafts ?? false;
-  return getAllSlugs({ includeDrafts })
-    .map((slug) => {
-      const { frontmatter } = getPostBySlug(slug, { includeDrafts: true });
+  const slugs = getAllSlugs({ includeDrafts: true });
+  const posts = await Promise.all(
+    slugs.map(async (slug) => {
+      const { frontmatter } = await getPostModule(slug);
       return { slug, frontmatter };
     })
+  );
+
+  return posts
     .filter((post) => includeDrafts || post.frontmatter.status !== "draft")
     .sort(
       (a, b) =>
         Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date)
     );
-}
-
-export function getPostBySlug(
-  slug: string,
-  options?: { includeDrafts?: boolean }
-): PostDetail {
-  const filePath = getPostFilePath(slug);
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`Post not found: ${slug}`);
-  }
-
-  const raw = fs.readFileSync(filePath, "utf8");
-  const { content, data } = matter(raw);
-  const frontmatter = assertFrontmatter(data, slug);
-  const includeDrafts = options?.includeDrafts ?? false;
-
-  if (!includeDrafts && frontmatter.status === "draft") {
-    throw new Error(`Post is draft: ${slug}`);
-  }
-
-  return { slug, frontmatter, content };
 }

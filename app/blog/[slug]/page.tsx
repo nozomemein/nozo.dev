@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllSlugs, getPostBySlug } from "@/lib/posts";
+import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 const SITE_NAME = "My Blog";
 
-export function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const slugs = getAllSlugs();
+  const params = await Promise.all(
+    slugs.map(async (slug) => {
+      const { frontmatter } = await getPostModule(slug);
+      return frontmatter.status === "draft" ? null : { slug };
+    })
+  );
+
+  return params.filter((item): item is { slug: string } => item !== null);
 }
 
 export async function generateMetadata({
@@ -18,7 +28,11 @@ export async function generateMetadata({
     notFound();
   }
 
-  const { frontmatter } = getPostBySlug(slug);
+  const { frontmatter } = await getPostModule(slug);
+  if (frontmatter.status === "draft") {
+    notFound();
+  }
+
   const title = `${frontmatter.title} | ${SITE_NAME}`;
   const description = frontmatter.description;
   const images = frontmatter.ogImage ? [frontmatter.ogImage] : undefined;
@@ -26,17 +40,18 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images,
-    },
-    twitter: {
-      card: images ? "summary_large_image" : "summary",
-      title,
-      description,
-      images,
-    },
+    // TODO: setup ogimage
+    // openGraph: {
+    //   title,
+    //   description,
+    //   images,
+    // },
+    // twitter: {
+    //   card: images ? "summary_large_image" : "summary",
+    //   title,
+    //   description,
+    //   images,
+    // },
   };
 }
 
@@ -50,8 +65,10 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const { frontmatter } = getPostBySlug(slug);
-  const { default: Post } = await import(`@/content/blog/${slug}.mdx`);
+  const { frontmatter, Component: Post } = await getPostModule(slug);
+  if (frontmatter.status === "draft") {
+    notFound();
+  }
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
@@ -81,5 +98,3 @@ export default async function BlogPostPage({
     </main>
   );
 }
-
-export const dynamicParams = false
