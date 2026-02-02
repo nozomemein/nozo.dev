@@ -4,9 +4,6 @@ import createMDX from "@next/mdx";
 const nextConfig = {
   output: "export",
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-
-  // もし入ってたら、これは OFF 推奨（pluginが効かない/挙動が違うことがある）
-  // experimental: { mdxRs: true },
 };
 
 const withMDX = createMDX({
