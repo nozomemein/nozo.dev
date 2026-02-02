@@ -3,7 +3,7 @@ import { TypographyH1, TypographyP } from "@/components/typography";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-start p-24 gap-12">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-start gap-12 px-6 py-24">
       <TypographyH1>nozomemein</TypographyH1>
       <div>
         <TypographyP>
