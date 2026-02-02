@@ -81,3 +81,5 @@ export default async function BlogPostPage({
     </main>
   );
 }
+
+export const dynamicParams = false
