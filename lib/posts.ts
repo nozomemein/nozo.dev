@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { ComponentType } from "react";
+import matter from "gray-matter";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -33,18 +34,9 @@ const REQUIRED_FIELDS: Array<keyof PostFrontmatter> = [
 
 function getFrontmatterStatusFromFile(filePath: string) {
   const raw = fs.readFileSync(filePath, "utf8");
-  const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*/);
-  if (!match) {
-    return undefined;
-  }
-
-  const frontmatter = match[1];
-  const statusMatch = frontmatter.match(
-    /^status:\s*(?:"([^"]+)"|'([^']+)'|([^\s#]+))\s*$/m
-  );
-  const value = statusMatch?.[1] ?? statusMatch?.[2] ?? statusMatch?.[3];
-
-  return value === "draft" || value === "published" ? value : undefined;
+  const { data } = matter(raw);
+  const status = data?.status;
+  return status === "draft" || status === "published" ? status : undefined;
 }
 
 function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
@@ -147,7 +139,8 @@ export async function getAllPosts(options?: {
   includeDrafts?: boolean;
 }): Promise<PostSummary[]> {
   const includeDrafts = options?.includeDrafts ?? false;
-  const slugs = getAllSlugs({ includeDrafts: true });
+  const slugs = getAllSlugs({ includeDrafts });
+
   const posts = await Promise.all(
     slugs.map(async (slug) => {
       const { frontmatter } = await getPostModule(slug);
@@ -155,10 +148,7 @@ export async function getAllPosts(options?: {
     })
   );
 
-  return posts
-    .filter((post) => includeDrafts || post.frontmatter.status !== "draft")
-    .sort(
-      (a, b) =>
-        Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date)
-    );
+  return posts.sort(
+    (a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date)
+  );
 }
