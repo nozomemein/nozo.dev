@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { IS_CF_PAGES_PROD, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
+import { config } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -8,15 +8,13 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+	metadataBase: new URL(config.site.prodOrigin),
 	title: {
-		default: SITE_NAME,
-		template: `%s | ${SITE_NAME}`,
+		default: config.site.name,
+		template: `%s | ${config.site.name}`,
 	},
-	description: SITE_DESCRIPTION,
-	robots: {
-		index: IS_CF_PAGES_PROD,
-		follow: IS_CF_PAGES_PROD,
-	},
+	description: config.site.description,
+	robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

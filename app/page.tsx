@@ -1,5 +1,10 @@
 import { TypographyH1, TypographyP } from "@/components/typography";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+	alternates: { canonical: "/" },
+};
 
 export default function Home() {
 	return (

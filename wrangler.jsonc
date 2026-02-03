@@ -13,7 +13,8 @@
 		"production": {
 			"vars": {
 				"DEPLOY_ENV": "production"
-			},"name": "nozodev"
+			},
+			"name": "nozodev"
 		}
 	}
 }

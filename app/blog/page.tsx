@@ -1,5 +1,10 @@
 import { getAllPosts } from "@/lib/posts";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+	alternates: { canonical: "/blog" },
+};
 
 export default async function BlogIndexPage() {
 	const posts = await getAllPosts();
