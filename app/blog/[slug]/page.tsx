@@ -1,5 +1,5 @@
-import { getAllSlugs, getPostModule } from "@/lib/posts";
 import { config } from "@/lib/constants";
+import { getAllSlugs, getPostModule } from "@/lib/posts";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 

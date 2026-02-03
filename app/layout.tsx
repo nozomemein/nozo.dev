@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { config, PROD_ORIGIN } from "@/lib/constants";
+import { PROD_ORIGIN, config } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
