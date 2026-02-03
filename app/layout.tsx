@@ -6,9 +6,19 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const SITE_NAME = "nozo.dev";
+const SITE_DESCRIPTION = "技術メモと備忘録をまとめるブログ。";
+
 export const metadata: Metadata = {
-  title: "nozo.dev",
-  description: "nozomemein's personal website",
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -17,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="jp">
+    <html lang="ja">
       <body className={inter.className}>
         <div className="flex min-h-screen flex-col">
           <header className="border-b">
