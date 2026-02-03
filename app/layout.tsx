@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const SITE_NAME = "nozo.dev";
 const SITE_DESCRIPTION = "技術メモと備忘録をまとめるブログ。";
-const IS_CF_PAGES_PROD = process.env.CF_PAGES_ENVIRONMENT === "production";
+const IS_CF_PAGES_PROD = process.env.CF_PAGES_BRANCH === "main";
 
 export const metadata: Metadata = {
 	title: {
