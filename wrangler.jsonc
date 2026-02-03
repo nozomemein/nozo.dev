@@ -3,5 +3,17 @@
 	"compatibility_date": "2026-01-31",
 	"assets": {
 		"directory": "./out"
+	},
+	"env": {
+		"preview": {
+			"vars": {
+				"DEPLOY_ENV": "preview"
+			}
+		},
+		"production": {
+			"vars": {
+				"DEPLOY_ENV": "production"
+			}
+		}
 	}
 }

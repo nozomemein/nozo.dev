@@ -1,14 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { IS_CF_PAGES_PROD, SITE_DESCRIPTION, SITE_NAME } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const SITE_NAME = "nozo.dev";
-const SITE_DESCRIPTION = "技術メモと備忘録をまとめるブログ。";
-const IS_CF_PAGES_PROD = process.env.CF_PAGES_BRANCH === "main";
 
 export const metadata: Metadata = {
 	title: {
@@ -18,7 +15,7 @@ export const metadata: Metadata = {
 	description: SITE_DESCRIPTION,
 	robots: {
 		index: IS_CF_PAGES_PROD,
-		follow: IS_CF_PAGES_PROD
+		follow: IS_CF_PAGES_PROD,
 	},
 };
 
