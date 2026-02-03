@@ -1,8 +1,7 @@
 import { getAllSlugs, getPostModule } from "@/lib/posts";
+import { config } from "@/lib/constants";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-
-const SITE_NAME = "My Blog";
 
 export const dynamicParams = false;
 
@@ -22,13 +21,14 @@ export async function generateMetadata({
 		notFound();
 	}
 
-	const title = `${frontmatter.title} | ${SITE_NAME}`;
+	const title = `${frontmatter.title} | ${config.site.name}`;
 	const description = frontmatter.description;
 	const images = frontmatter.ogImage ? [frontmatter.ogImage] : undefined;
 
 	return {
 		title,
 		description,
+		alternates: { canonical: `/blog/${slug}` },
 		// TODO: setup ogimage
 		// openGraph: {
 		//   title,
