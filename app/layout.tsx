@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { PROD_ORIGIN, config } from "@/lib/constants";
+import { config } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	metadataBase: new URL(PROD_ORIGIN),
+	metadataBase: new URL(config.site.prodOrigin),
 	title: {
 		default: config.site.name,
 		template: `%s | ${config.site.name}`,
