@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { getAllPosts } from "@/lib/posts";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -41,12 +42,9 @@ export default async function BlogIndexPage() {
 										<span aria-hidden="true">•</span>
 									) : null}
 									{post.frontmatter.tags?.map((tag) => (
-										<span
-											key={tag}
-											className="rounded-full bg-neutral-100 px-2 py-0.5"
-										>
+										<Badge key={tag} variant="secondary" className="text-xs">
 											#{tag}
-										</span>
+										</Badge>
 									))}
 								</div>
 							</Link>
