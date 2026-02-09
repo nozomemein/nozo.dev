@@ -12,7 +12,8 @@ export default function Home() {
 			<TypographyH1>nozomemein</TypographyH1>
 			<div>
 				<TypographyP>
-					Hello, I&apos;m nozomemein, a passionate software engineer.
+					Hello, I&apos;m Nozomi Hijikata (nozomemein), a passionate software
+					engineer.
 				</TypographyP>
 				<TypographyP>
 					I enjoy building solutions and continuously learning to improve my
