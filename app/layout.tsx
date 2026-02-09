@@ -45,7 +45,7 @@ export default function RootLayout({
 					<div className="flex-1">{children}</div>
 					<footer className="border-t">
 						<div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-6 text-xs text-muted-foreground">
-							<p>© {new Date().getFullYear()} nozo.dev</p>
+							<p>© {new Date().getFullYear()} Nozomi Hijikata</p>
 							<Link href="/privacy" className="hover:underline">
 								Privacy Policy
 							</Link>
