@@ -6,7 +6,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 		a: ({ className, ...props }) => (
 			<a
 				className={cn(
-					"text-blue-600 underline underline-offset-4 hover:text-blue-700",
+					"text-blue-600 underline underline-offset-4 hover:text-blue-700 dark:text-sky-300 dark:hover:text-sky-200",
 					className,
 				)}
 				{...props}

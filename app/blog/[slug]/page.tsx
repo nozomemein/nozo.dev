@@ -64,7 +64,9 @@ export default async function BlogPostPage({
 					<h1 className="text-3xl font-semibold tracking-tight">
 						{frontmatter.title}
 					</h1>
-					<p className="text-sm text-neutral-600">{frontmatter.description}</p>
+					<p className="text-sm text-neutral-600 dark:text-muted-foreground">
+						{frontmatter.description}
+					</p>
 					<div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
 						<time dateTime={frontmatter.date}>{frontmatter.date}</time>
 						{frontmatter.tags?.length ? (

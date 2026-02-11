@@ -36,33 +36,33 @@
 	}
 
 	.dark {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
+		--background: 222 20% 11%;
+		--foreground: 210 20% 92%;
 
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
+		--card: 222 20% 13%;
+		--card-foreground: 210 20% 92%;
 
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
+		--popover: 222 20% 13%;
+		--popover-foreground: 210 20% 92%;
 
-		--primary: 210 40% 98%;
-		--primary-foreground: 222.2 47.4% 11.2%;
+		--primary: 210 30% 90%;
+		--primary-foreground: 222 20% 16%;
 
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
+		--secondary: 220 18% 20%;
+		--secondary-foreground: 210 20% 90%;
 
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
+		--muted: 220 16% 18%;
+		--muted-foreground: 215 14% 72%;
 
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
+		--accent: 220 18% 22%;
+		--accent-foreground: 210 20% 90%;
 
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
+		--destructive: 0 58% 38%;
+		--destructive-foreground: 210 20% 92%;
 
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 212.7 26.8% 83.9%;
+		--border: 220 15% 24%;
+		--input: 220 15% 24%;
+		--ring: 215 18% 70%;
 	}
 }
 
@@ -72,5 +72,29 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+}
+
+@layer components {
+	section[data-footnotes] {
+		font-size: 0.875rem;
+		line-height: 1.6;
+	}
+
+	section[data-footnotes] ol {
+		list-style: decimal;
+		padding-left: 1.5rem;
+	}
+
+	section[data-footnotes] li {
+		margin-top: 0.5rem;
+	}
+
+	section[data-footnotes] li::marker {
+		color: hsl(var(--muted-foreground));
+	}
+
+	section[data-footnotes] p {
+		display: inline;
 	}
 }

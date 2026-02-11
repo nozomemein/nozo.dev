@@ -15,7 +15,7 @@ export default async function BlogIndexPage() {
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
 			<header className="space-y-2">
 				<h1 className="text-3xl font-semibold tracking-tight">Blog</h1>
-				<p className="text-sm text-neutral-600">
+				<p className="text-sm text-neutral-600 dark:text-muted-foreground">
 					Thoughts, notes, and experiments.
 				</p>
 			</header>
@@ -31,7 +31,7 @@ export default async function BlogIndexPage() {
 								<h2 className="text-xl font-semibold tracking-tight group-hover:underline">
 									{post.frontmatter.title}
 								</h2>
-								<p className="text-sm text-neutral-600">
+								<p className="text-sm text-neutral-600 dark:text-muted-foreground">
 									{post.frontmatter.description}
 								</p>
 								<div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
