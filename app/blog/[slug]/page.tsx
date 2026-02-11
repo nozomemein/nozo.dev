@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { config } from "@/lib/constants";
 import { getAllSlugs, getPostModule } from "@/lib/posts";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -22,7 +21,7 @@ export async function generateMetadata({
 		notFound();
 	}
 
-	const title = `${frontmatter.title} | ${config.site.name}`;
+	const title = frontmatter.title;
 	const description = frontmatter.description;
 	const images = frontmatter.ogImage ? [frontmatter.ogImage] : undefined;
 
