@@ -21,13 +21,10 @@ pre-commit:
       run: bun run check
     betterleaks:
       tags: security
-      # `--staged` is the right scope for a secret scanner — only
-      # content that's about to be committed can leak secrets into
-      # the repo. A full-tree scan doesn't add safety, just latency.
-      run: betterleaks git --pre-commit --redact --staged --verbose
+      # Scan the whole repo, not just staged files — same scope as
+      # biome so unstaged secret drift is caught before commit.
+      run: betterleaks git . --redact --verbose
     zizmor:
       tags: security
-      # GitHub Actions security / lint. Only runs when a workflow
-      # file is staged, so the day-to-day commit cost is zero.
-      glob: ".github/workflows/*.{yml,yaml}"
-      run: zizmor {staged_files}
+      # Audit all workflow files on every commit, not just staged ones.
+      run: zizmor .github/workflows/
