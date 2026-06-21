@@ -20,18 +20,18 @@ export default function Home() {
 					craft.
 				</TypographyP>
 			</div>
-			<div className="flex flex-row item-start gap-4">
+			<div className="flex flex-row items-start gap-4">
 				<Link
 					href="https://x.com/nozomemein"
 					target="_blank"
-					className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
+					className="text-primary underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
 				>
 					Twitter/X
 				</Link>
 				<Link
 					href="https://github.com/nozomemein"
 					target="_blank"
-					className="text-primay underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
+					className="text-primary underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
 				>
 					GitHub
 				</Link>
