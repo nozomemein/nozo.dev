@@ -1,0 +1,30 @@
+# https://github.com/evilmartians/lefthook
+#
+# After installing dependencies, wire the hooks into .git/hooks once:
+#
+#   bunx lefthook install
+#
+# Skip a hook ad-hoc with LEFTHOOK_EXCLUDE=<command_name>.
+#
+# External binaries (install once):
+#   brew install betterleaks zizmor
+#   pipx install zizmor  # alternative for zizmor
+
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      tags: lint
+      # Scan the whole project, not just staged files. CI runs the
+      # same `bun run check` so the local hook catches the same
+      # violations CI would.
+      run: bun run check
+    betterleaks:
+      tags: security
+      # Scan the whole repo, not just staged files — same scope as
+      # biome so unstaged secret drift is caught before commit.
+      run: betterleaks git . --redact --verbose
+    zizmor:
+      tags: security
+      # Audit all workflow files on every commit, not just staged ones.
+      run: zizmor .github/workflows/
