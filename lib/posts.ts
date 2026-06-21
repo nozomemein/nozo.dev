@@ -5,9 +5,12 @@ import type { ComponentType } from "react";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
-export type PostFrontmatter = {
+export type BaseFrontmatter = {
 	title: string;
 	description: string;
+};
+
+export type PostFrontmatter = BaseFrontmatter & {
 	date: string;
 	tags?: string[];
 	ogImage?: string;
