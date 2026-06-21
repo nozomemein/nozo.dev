@@ -1,0 +1,7 @@
+# https://docs.zizmor.sh/configuration/
+#
+# We now SHA-pin every action in the workflows, so zizmor's
+# default `hash-pin` policy applies project-wide with no
+# overrides. Dependabot drives the bumps; the `# v<tag>` comment
+# next to each SHA keeps the human-readable version visible.
+rules: {}
