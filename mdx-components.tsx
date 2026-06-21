@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import type { MDXComponents } from "mdx/types";
+import { cn } from "@/lib/utils";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
 	return {

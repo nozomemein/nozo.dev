@@ -1,5 +1,5 @@
-import PrivacyContent, { frontmatter } from "@/content/pages/privacy.mdx";
 import type { Metadata } from "next";
+import PrivacyContent, { frontmatter } from "@/content/pages/privacy.mdx";
 
 export const metadata: Metadata = {
 	title: frontmatter.title,

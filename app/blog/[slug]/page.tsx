@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
-import { getAllSlugs, getPostModule } from "@/lib/posts";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 export const dynamicParams = false;
 
@@ -23,7 +23,6 @@ export async function generateMetadata({
 
 	const title = frontmatter.title;
 	const description = frontmatter.description;
-	const images = frontmatter.ogImage ? [frontmatter.ogImage] : undefined;
 
 	return {
 		title,
