@@ -1,6 +1,6 @@
-import { TypographyH1, TypographyP } from "@/components/typography";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { TypographyH1, TypographyP } from "@/components/typography";
 
 export const metadata: Metadata = {
 	alternates: { canonical: "/" },

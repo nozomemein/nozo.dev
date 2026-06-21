@@ -49,7 +49,7 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 	for (const field of REQUIRED_FIELDS) {
 		const value = frontmatter[field];
 		if (typeof value !== "string" || value.trim().length === 0) {
-			throw new Error(`Missing required frontmatter \"${field}\" in ${slug}`);
+			throw new Error(`Missing required frontmatter "${field}" in ${slug}`);
 		}
 	}
 
@@ -58,12 +58,12 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		typeof tags !== "undefined" &&
 		(!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string"))
 	) {
-		throw new Error(`Invalid frontmatter \"tags\" in ${slug}`);
+		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
 	}
 
 	const ogImage = frontmatter.ogImage;
 	if (typeof ogImage !== "undefined" && typeof ogImage !== "string") {
-		throw new Error(`Invalid frontmatter \"ogImage\" in ${slug}`);
+		throw new Error(`Invalid frontmatter "ogImage" in ${slug}`);
 	}
 
 	const status = frontmatter.status;
@@ -72,12 +72,12 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		status !== "draft" &&
 		status !== "published"
 	) {
-		throw new Error(`Invalid frontmatter \"status\" in ${slug}`);
+		throw new Error(`Invalid frontmatter "status" in ${slug}`);
 	}
 
 	const date = frontmatter.date as string;
 	if (Number.isNaN(Date.parse(date))) {
-		throw new Error(`Invalid frontmatter \"date\" in ${slug}`);
+		throw new Error(`Invalid frontmatter "date" in ${slug}`);
 	}
 
 	return {
@@ -118,7 +118,7 @@ export async function getPostModule(slug: string): Promise<PostModule> {
 
 	try {
 		mod = (await import(`@/content/blog/${slug}.mdx`)) as MdxModule;
-	} catch (error) {
+	} catch {
 		throw new Error(`Post not found: ${slug}`);
 	}
 
