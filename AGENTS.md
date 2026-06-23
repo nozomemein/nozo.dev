@@ -40,12 +40,16 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
 | `lib/posts.ts` | Blog post loading, frontmatter validation |
+| `lib/link-previews.ts` | LinkCard OGP preview cache loader |
+| `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
+| `content/generated/link-previews.json` | Cached external link previews |
 | `lib/constants.ts` | Site metadata |
-| `.github/workflows/ci.yml` | CI (Biome check + build + zizmor) |
+| `.github/workflows/ci.yml` | CI (Biome check + test + build + zizmor) |
 
 ## Dev environment
 
 - Package manager: **Bun** (`bun install`, lockfile: `bun.lock`)
+- **No npm-style lockfiles:** this repo uses `bun.lock` only. Do not create or commit `package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`. Do not run `npm`, `yarn`, or `pnpm` — use `bun` / `bunx` instead.
 - Install git hooks once: `bunx lefthook install` (see `lefthook.yml`)
 - Pre-commit runs: `bun run check`, `betterleaks`, `zizmor`
 
@@ -56,10 +60,11 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `bun run dev` | Local dev server |
 | `bun run check` | Lint + format (same as CI) |
 | `bun run check:write` | Auto-fix Biome issues |
+| `bun test` | Run unit tests (same as CI) |
 | `bun run build` | Production static export |
 | `bun run clean` | Remove `.next` and `out` |
 
-Before finishing a task, run `bun run check` and `bun run build`.
+Before finishing a task, run `bun run check`, `bun test`, and `bun run build`.
 
 ## Code conventions
 
@@ -75,7 +80,9 @@ Before finishing a task, run `bun run check` and `bun run build`.
 
 Required frontmatter fields: `title`, `description`, `date` (ISO date string).
 
-Optional: `tags`, `ogImage`, `status` (`draft` | `published`).
+Optional: `tags`, `status` (`draft` | `published`).
+
+Published posts (anything that is not `status: draft`) also require `ogImage` — a root-relative path (e.g. `/og/hello.png`) with a matching file under `public/`.
 
 - Draft posts are excluded from production builds unless `includeDrafts: true`
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored
@@ -86,7 +93,8 @@ Optional: `tags`, `ogImage`, `status` (`draft` | `published`).
 - **Commit style:** Conventional Commits in English (e.g. `feat:`, `fix:`, `chore:`)
 - **Do not commit** unless explicitly asked
 - **Do not push** unless explicitly asked
-- **CI must pass:** `bun run check` + `bun run build`
+- **CI must pass:** `bun run check` + `bun test` + `bun run build`
+- **Link related issues in PRs:** include `Closes #<issue>` (or `Refs #<issue>` when not fully resolving) in the PR description body so GitHub links the PR to the issue
 - **Security:** never commit secrets; pre-commit runs `betterleaks`
 - **Dependencies:** Dependabot with 7-day cooldown for GitHub Actions
 - Pin GitHub Actions to full SHAs when editing workflows
@@ -94,6 +102,6 @@ Optional: `tags`, `ogImage`, `status` (`draft` | `published`).
 ## Guardrails
 
 - Do not overwrite unrelated user edits
-- Do not add tests unless requested or clearly valuable (no test suite exists today)
+- Add or update tests in `*.test.ts` when changing validation logic or build-time scripts
 - Do not add markdown/docs files unless requested
 - Keep changes focused on the task at hand

@@ -42,7 +42,7 @@ function getFrontmatterStatusFromFile(filePath: string) {
 	return status === "draft" || status === "published" ? status : undefined;
 }
 
-function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
+function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
 	if (!data || typeof data !== "object") {
 		throw new Error(`Missing frontmatter export in ${slug}`);
 	}
@@ -70,6 +70,27 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 	}
 
 	const status = frontmatter.status;
+	const isDraft = status === "draft";
+
+	if (!isDraft) {
+		if (typeof ogImage !== "string" || ogImage.trim().length === 0) {
+			throw new Error(`Missing required frontmatter "ogImage" in ${slug}`);
+		}
+
+		if (!ogImage.startsWith("/")) {
+			throw new Error(
+				`Invalid frontmatter "ogImage" in ${slug}: must be a root-relative path`,
+			);
+		}
+
+		const ogImagePath = path.join(process.cwd(), "public", ogImage.slice(1));
+		if (!fs.existsSync(ogImagePath)) {
+			throw new Error(
+				`Invalid frontmatter "ogImage" in ${slug}: file not found at public${ogImage}`,
+			);
+		}
+	}
+
 	if (
 		typeof status !== "undefined" &&
 		status !== "draft" &&
@@ -116,6 +137,8 @@ export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
 		.map((name) => name.replace(/\.mdx$/, ""));
 }
 
+export { validatePostFrontmatter };
+
 export async function getPostModule(slug: string): Promise<PostModule> {
 	let mod: MdxModule;
 
@@ -129,7 +152,7 @@ export async function getPostModule(slug: string): Promise<PostModule> {
 		throw new Error(`Missing default export in ${slug}`);
 	}
 
-	const frontmatter = assertFrontmatter(mod.frontmatter, slug);
+	const frontmatter = validatePostFrontmatter(mod.frontmatter, slug);
 
 	return {
 		slug,
