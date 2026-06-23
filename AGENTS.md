@@ -71,6 +71,21 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 
 Before finishing a task, run `bun run check`, `bun test`, and `bun run build`.
 
+## Visual verification
+
+After any change that affects appearance (layout, styling, components, typography, theme colors, generated images, etc.), **always verify in a local browser** before finishing the task.
+
+1. Start the dev server: `bun run dev`
+2. Open the affected page(s) at `http://localhost:3000`
+3. Check both light and dark mode when the change may affect theme styling
+
+For **OG images**, preview the generated image directly after changing `app/blog/[slug]/opengraph-image.tsx`, `lib/og/colors.ts`, or blog post titles:
+
+- `http://localhost:3000/blog/<slug>/opengraph-image`
+- Example: `http://localhost:3000/blog/hello/opengraph-image`
+
+Reload after edits to confirm title text, colors, and layout look correct.
+
 ## Code conventions
 
 - **Formatter/linter:** Biome only (no ESLint/Prettier)
