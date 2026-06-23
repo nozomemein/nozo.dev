@@ -25,14 +25,52 @@ function getFontData() {
 
 type CreateOgImageResponseOptions = {
 	title: string;
-	footer?: string;
+	/** Omit for site name; pass `null` to hide the footer row. */
+	footer?: string | null;
 };
 
 export async function createOgImageResponse({
 	title,
-	footer = config.site.name,
+	footer,
 }: CreateOgImageResponseOptions) {
 	const fontData = await getFontData();
+	const footerText = footer === undefined ? config.site.name : footer;
+	const fonts = [
+		{
+			name: "Noto Sans JP",
+			data: fontData,
+			style: "normal" as const,
+			weight: 700 as const,
+		},
+	];
+
+	if (!footerText) {
+		return new ImageResponse(
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+					width: "100%",
+					height: "100%",
+					backgroundColor: ogImageTheme.background,
+					padding: "80px",
+				}}
+			>
+				<div
+					style={{
+						fontSize: 64,
+						fontWeight: 700,
+						color: ogImageTheme.foreground,
+						fontFamily: "Noto Sans JP",
+						lineHeight: 1.3,
+					}}
+				>
+					{title}
+				</div>
+			</div>,
+			{ ...ogImageSize, fonts },
+		);
+	}
 
 	return new ImageResponse(
 		<div
@@ -68,19 +106,9 @@ export async function createOgImageResponse({
 					fontFamily: "Noto Sans JP",
 				}}
 			>
-				{footer}
+				{footerText}
 			</div>
 		</div>,
-		{
-			...ogImageSize,
-			fonts: [
-				{
-					name: "Noto Sans JP",
-					data: fontData,
-					style: "normal",
-					weight: 700,
-				},
-			],
-		},
+		{ ...ogImageSize, fonts },
 	);
 }

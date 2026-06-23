@@ -12,6 +12,6 @@ export const dynamic = "force-static";
 export default async function OpenGraphImage() {
 	return createOgImageResponse({
 		title: config.site.name,
-		footer: config.site.description,
+		footer: null,
 	});
 }
