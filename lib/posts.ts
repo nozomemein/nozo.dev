@@ -13,7 +13,6 @@ export type BaseFrontmatter = {
 export type PostFrontmatter = BaseFrontmatter & {
 	date: string;
 	tags?: string[];
-	ogImage?: string;
 	status?: "draft" | "published";
 };
 
@@ -64,32 +63,7 @@ function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
 	}
 
-	const ogImage = frontmatter.ogImage;
-	if (typeof ogImage !== "undefined" && typeof ogImage !== "string") {
-		throw new Error(`Invalid frontmatter "ogImage" in ${slug}`);
-	}
-
 	const status = frontmatter.status;
-	const isDraft = status === "draft";
-
-	if (!isDraft) {
-		if (typeof ogImage !== "string" || ogImage.trim().length === 0) {
-			throw new Error(`Missing required frontmatter "ogImage" in ${slug}`);
-		}
-
-		if (!ogImage.startsWith("/")) {
-			throw new Error(
-				`Invalid frontmatter "ogImage" in ${slug}: must be a root-relative path`,
-			);
-		}
-
-		const ogImagePath = path.join(process.cwd(), "public", ogImage.slice(1));
-		if (!fs.existsSync(ogImagePath)) {
-			throw new Error(
-				`Invalid frontmatter "ogImage" in ${slug}: file not found at public${ogImage}`,
-			);
-		}
-	}
 
 	if (
 		typeof status !== "undefined" &&
@@ -109,7 +83,6 @@ function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		description: frontmatter.description as string,
 		date,
 		tags: tags as string[] | undefined,
-		ogImage: ogImage as string | undefined,
 		status: status as "draft" | "published" | undefined,
 	};
 }

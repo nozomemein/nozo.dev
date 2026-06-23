@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { config } from "@/lib/constants";
+import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
 import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 export const dynamicParams = false;
@@ -24,7 +25,6 @@ export async function generateMetadata({
 
 	const title = frontmatter.title;
 	const description = frontmatter.description;
-	const ogImage = frontmatter.ogImage;
 
 	return {
 		title,
@@ -35,13 +35,11 @@ export async function generateMetadata({
 			description,
 			type: "article",
 			publishedTime: frontmatter.date,
-			images: ogImage ? [{ url: ogImage }] : undefined,
 		},
 		twitter: {
 			card: "summary_large_image",
 			title,
 			description,
-			images: ogImage ? [ogImage] : undefined,
 		},
 	};
 }
@@ -52,9 +50,10 @@ function buildBlogPostingJsonLd(
 		title: string;
 		description: string;
 		date: string;
-		ogImage?: string;
 	},
 ) {
+	const ogImagePath = getBlogPostOgImagePath(slug);
+
 	return {
 		"@context": "https://schema.org",
 		"@type": "BlogPosting",
@@ -62,9 +61,7 @@ function buildBlogPostingJsonLd(
 		description: frontmatter.description,
 		datePublished: frontmatter.date,
 		url: `${config.site.prodOrigin}/blog/${slug}`,
-		image: frontmatter.ogImage
-			? `${config.site.prodOrigin}${frontmatter.ogImage}`
-			: undefined,
+		image: `${config.site.prodOrigin}${ogImagePath}`,
 		author: {
 			"@type": "Person",
 			name: config.site.authorName,

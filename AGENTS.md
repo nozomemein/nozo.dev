@@ -40,9 +40,12 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
 | `lib/posts.ts` | Blog post loading, frontmatter validation |
+| `lib/post-frontmatter.ts` | Read blog frontmatter from MDX files without importing MDX |
 | `lib/link/card-urls.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
 | `lib/link/preview-utils.ts` | Link preview cache TTL and image URL helpers |
 | `lib/link/previews.ts` | LinkCard OGP preview cache loader |
+| `app/blog/[slug]/opengraph-image.tsx` | Generated OG images via `ImageResponse` |
+| `assets/fonts/` | Fonts used by generated OG images |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
 | `lib/constants.ts` | Site metadata |
@@ -84,7 +87,7 @@ Required frontmatter fields: `title`, `description`, `date` (ISO date string).
 
 Optional: `tags`, `status` (`draft` | `published`).
 
-Published posts (anything that is not `status: draft`) also require `ogImage` — a root-relative path (e.g. `/og/hello.png`) with a matching file under `public/`.
+Article OG images are generated at build time by `app/blog/[slug]/opengraph-image.tsx` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
 
 - Draft posts are excluded from production builds unless `includeDrafts: true`
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored
