@@ -3,6 +3,7 @@ import path from "node:path";
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { config } from "@/lib/constants";
+import { ogImageTheme } from "@/lib/og/colors";
 import { getPostFrontmatterBySlug } from "@/lib/post-frontmatter";
 import { getAllSlugs } from "@/lib/posts";
 
@@ -51,7 +52,7 @@ export default async function OpenGraphImage({
 				justifyContent: "space-between",
 				width: "100%",
 				height: "100%",
-				backgroundColor: "#0f172a",
+				backgroundColor: ogImageTheme.background,
 				padding: "80px",
 			}}
 		>
@@ -62,7 +63,7 @@ export default async function OpenGraphImage({
 					alignItems: "center",
 					fontSize: 64,
 					fontWeight: 700,
-					color: "#f8fafc",
+					color: ogImageTheme.foreground,
 					fontFamily: "Noto Sans JP",
 					lineHeight: 1.3,
 				}}
@@ -73,7 +74,7 @@ export default async function OpenGraphImage({
 				style={{
 					fontSize: 28,
 					fontWeight: 500,
-					color: "#94a3b8",
+					color: ogImageTheme.mutedForeground,
 					fontFamily: "Noto Sans JP",
 				}}
 			>
