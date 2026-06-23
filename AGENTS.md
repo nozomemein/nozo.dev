@@ -44,7 +44,12 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `lib/link/card-urls.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
 | `lib/link/preview-utils.ts` | Link preview cache TTL and image URL helpers |
 | `lib/link/previews.ts` | LinkCard OGP preview cache loader |
-| `app/blog/[slug]/opengraph-image.tsx` | Generated OG images via `ImageResponse` |
+| `lib/og/colors.ts` | Dark theme colors for generated OG images |
+| `lib/og/image-response.tsx` | Shared `ImageResponse` builder for OG images |
+| `app/opengraph-image.tsx` | Home page OG image |
+| `app/blog/opengraph-image.tsx` | Blog index OG image |
+| `app/blog/[slug]/opengraph-image.tsx` | Blog post OG images |
+| `app/privacy/opengraph-image.tsx` | Privacy page OG image |
 | `assets/fonts/` | Fonts used by generated OG images |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
@@ -79,10 +84,12 @@ After any change that affects appearance (layout, styling, components, typograph
 2. Open the affected page(s) at `http://localhost:3000`
 3. Check both light and dark mode when the change may affect theme styling
 
-For **OG images**, preview the generated image directly after changing `app/blog/[slug]/opengraph-image.tsx`, `lib/og/colors.ts`, or blog post titles:
+For **OG images**, preview the generated image directly after changing `lib/og/image-response.tsx`, `lib/og/colors.ts`, route-level `opengraph-image.tsx` files, or blog post titles:
 
-- `http://localhost:3000/blog/<slug>/opengraph-image`
-- Example: `http://localhost:3000/blog/hello/opengraph-image`
+- Home: `http://localhost:3000/opengraph-image`
+- Blog index: `http://localhost:3000/blog/opengraph-image`
+- Blog post: `http://localhost:3000/blog/<slug>/opengraph-image` (e.g. `/blog/hello/opengraph-image`)
+- Privacy: `http://localhost:3000/privacy/opengraph-image`
 
 Reload after edits to confirm title text, colors, and layout look correct.
 
