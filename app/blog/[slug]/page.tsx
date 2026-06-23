@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { config } from "@/lib/constants";
+import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
 import { getAllSlugs, getPostModule } from "@/lib/posts";
 
 export const dynamicParams = false;
@@ -28,18 +30,46 @@ export async function generateMetadata({
 		title,
 		description,
 		alternates: { canonical: `/blog/${slug}` },
-		// TODO: setup ogimage
-		// openGraph: {
-		//   title,
-		//   description,
-		//   images,
-		// },
-		// twitter: {
-		//   card: images ? "summary_large_image" : "summary",
-		//   title,
-		//   description,
-		//   images,
-		// },
+		openGraph: {
+			title,
+			description,
+			type: "article",
+			publishedTime: frontmatter.date,
+		},
+		twitter: {
+			card: "summary_large_image",
+			title,
+			description,
+		},
+	};
+}
+
+function buildBlogPostingJsonLd(
+	slug: string,
+	frontmatter: {
+		title: string;
+		description: string;
+		date: string;
+	},
+) {
+	const ogImagePath = getBlogPostOgImagePath(slug);
+
+	return {
+		"@context": "https://schema.org",
+		"@type": "BlogPosting",
+		headline: frontmatter.title,
+		description: frontmatter.description,
+		datePublished: frontmatter.date,
+		url: `${config.site.prodOrigin}/blog/${slug}`,
+		image: `${config.site.prodOrigin}${ogImagePath}`,
+		author: {
+			"@type": "Person",
+			name: config.site.authorName,
+		},
+		publisher: {
+			"@type": "Organization",
+			name: config.site.name,
+		},
 	};
 }
 
@@ -55,8 +85,15 @@ export default async function BlogPostPage({
 		notFound();
 	}
 
+	const jsonLd = buildBlogPostingJsonLd(slug, frontmatter);
+
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized from trusted build-time data
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+			/>
 			<article className="space-y-6">
 				<header className="space-y-3">
 					<h1 className="text-3xl font-semibold tracking-tight">

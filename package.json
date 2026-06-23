@@ -4,12 +4,14 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
-		"build": "next build",
-		"start": "bunx serve@14.2.6 out",
+		"build": "bun run fetch:link-previews && next build",
+		"fetch:link-previews": "bun scripts/fetch-link-previews.ts",
+		"start": "bunx serve@latest out",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
 		"check:write": "biome check --write .",
+		"test": "bun test",
 		"clean": "rm -rf .next out"
 	},
 	"dependencies": {
@@ -30,16 +32,17 @@
 		"remark-frontmatter": "^5.0.0",
 		"remark-gfm": "^4.0.1",
 		"remark-mdx-frontmatter": "^5.2.0",
-		"tailwind-merge": "^3.6.0"
+		"tailwind-merge": "^3.6.0",
+		"wrangler": "^4.100.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.0",
-		"wrangler": "^4.100.0",
 		"@tailwindcss/postcss": "^4.3.1",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^25.9.3",
 		"@types/react": "^19.2.17",
 		"@types/react-dom": "^19.2.3",
+		"cheerio": "^1.1.2",
 		"lefthook": "^2.1.9",
 		"postcss": "^8.5.15",
 		"tailwindcss": "^4.3.1",

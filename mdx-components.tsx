@@ -1,8 +1,10 @@
 import type { MDXComponents } from "mdx/types";
+import { LinkCard } from "@/components/link-card";
 import { cn } from "@/lib/utils";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
 	return {
+		LinkCard,
 		a: ({ className, ...props }) => (
 			<a
 				className={cn(

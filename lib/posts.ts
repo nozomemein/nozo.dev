@@ -13,7 +13,6 @@ export type BaseFrontmatter = {
 export type PostFrontmatter = BaseFrontmatter & {
 	date: string;
 	tags?: string[];
-	ogImage?: string;
 	status?: "draft" | "published";
 };
 
@@ -42,7 +41,7 @@ function getFrontmatterStatusFromFile(filePath: string) {
 	return status === "draft" || status === "published" ? status : undefined;
 }
 
-function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
+function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
 	if (!data || typeof data !== "object") {
 		throw new Error(`Missing frontmatter export in ${slug}`);
 	}
@@ -64,12 +63,8 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
 	}
 
-	const ogImage = frontmatter.ogImage;
-	if (typeof ogImage !== "undefined" && typeof ogImage !== "string") {
-		throw new Error(`Invalid frontmatter "ogImage" in ${slug}`);
-	}
-
 	const status = frontmatter.status;
+
 	if (
 		typeof status !== "undefined" &&
 		status !== "draft" &&
@@ -88,7 +83,6 @@ function assertFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		description: frontmatter.description as string,
 		date,
 		tags: tags as string[] | undefined,
-		ogImage: ogImage as string | undefined,
 		status: status as "draft" | "published" | undefined,
 	};
 }
@@ -116,6 +110,8 @@ export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
 		.map((name) => name.replace(/\.mdx$/, ""));
 }
 
+export { validatePostFrontmatter };
+
 export async function getPostModule(slug: string): Promise<PostModule> {
 	let mod: MdxModule;
 
@@ -129,7 +125,7 @@ export async function getPostModule(slug: string): Promise<PostModule> {
 		throw new Error(`Missing default export in ${slug}`);
 	}
 
-	const frontmatter = assertFrontmatter(mod.frontmatter, slug);
+	const frontmatter = validatePostFrontmatter(mod.frontmatter, slug);
 
 	return {
 		slug,

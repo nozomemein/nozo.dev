@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  lint-and-build:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,6 +34,9 @@ jobs:
 
       - name: Lint + Format
         run: bun run check
+
+      - name: Test
+        run: bun test
 
       - name: Build
         run: bun run build

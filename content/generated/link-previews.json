@@ -1,0 +1,9 @@
+{
+	"https://github.com/flutter/packages/pull/9868": {
+		"title": "[go_router] Fix Android Cold Start deep link with empty path losing scheme and authority. by nozomemein · Pull Request #9868 · flutter/packages",
+		"description": "Description\nFixes an issue where deep links with empty paths (e.g., https://example.com) lose their scheme and authority information during Android Cold Start.\nThis PR fixes flutter/flutter#174249\n...",
+		"image": "https://opengraph.githubassets.com/eaae1fde5fb0cd2b9f5dfbf8b57c7e393dec010df52595323bb05744fef10db5/flutter/packages/pull/9868",
+		"siteName": "GitHub",
+		"fetchedAt": "2026-06-23T12:53:14.793Z"
+	}
+}
