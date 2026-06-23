@@ -40,7 +40,9 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
 | `lib/posts.ts` | Blog post loading, frontmatter validation |
-| `lib/link-previews.ts` | LinkCard OGP preview cache loader |
+| `lib/link/card-urls.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
+| `lib/link/preview-utils.ts` | Link preview cache TTL and image URL helpers |
+| `lib/link/previews.ts` | LinkCard OGP preview cache loader |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
 | `lib/constants.ts` | Site metadata |
@@ -87,6 +89,25 @@ Published posts (anything that is not `status: draft`) also require `ogImage` �
 - Draft posts are excluded from production builds unless `includeDrafts: true`
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored
 - New posts: Japanese body text; frontmatter `title`/`description` typically Japanese
+
+### Link cards
+
+Use a self-closing `<LinkCard />` in MDX for rich external link previews. The build script extracts `href` from these tags only (regular markdown links are unchanged).
+
+Supported JSX forms:
+
+- `href` is required; use double or single quotes
+- optional `className`
+- prop order does not matter
+- multiline tags are supported
+
+Examples:
+
+```mdx
+<LinkCard href="https://example.com/page" />
+<LinkCard className="my-4" href="https://example.com/page" />
+<LinkCard href='https://example.com/page' className="my-4" />
+```
 
 ## Git and PR workflow
 

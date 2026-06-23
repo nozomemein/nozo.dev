@@ -1,4 +1,4 @@
-import { getLinkPreview } from "@/lib/link-previews";
+import { getLinkPreview } from "@/lib/link/previews";
 import { cn } from "@/lib/utils";
 
 type LinkCardProps = {

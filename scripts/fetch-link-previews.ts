@@ -1,6 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as cheerio from "cheerio";
+import { extractLinkCardHrefs } from "@/lib/link/card-urls";
+import {
+	resolvePreviewImageUrl,
+	shouldSkipLinkPreviewFetch,
+} from "@/lib/link/preview-utils";
+import type { LinkPreview, LinkPreviewCache } from "@/lib/link/previews";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 const OUTPUT_PATH = path.join(
@@ -9,20 +15,8 @@ const OUTPUT_PATH = path.join(
 	"generated",
 	"link-previews.json",
 );
-const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 5000;
 const CONCURRENCY = 4;
-const LINK_CARD_RE = /<LinkCard\s+href="([^"]+)"\s*\/>/g;
-
-type LinkPreview = {
-	title?: string;
-	description?: string;
-	image?: string;
-	siteName?: string;
-	fetchedAt: string;
-};
-
-type LinkPreviewCache = Record<string, LinkPreview>;
 
 function getFrontmatterStatusFromFile(filePath: string): string | undefined {
 	const raw = fs.readFileSync(filePath, "utf8");
@@ -62,8 +56,8 @@ function extractLinkCardUrls(): string[] {
 		}
 
 		const content = fs.readFileSync(filePath, "utf8");
-		for (const match of content.matchAll(LINK_CARD_RE)) {
-			urls.add(match[1]);
+		for (const href of extractLinkCardHrefs(content)) {
+			urls.add(href);
 		}
 	}
 
@@ -154,7 +148,7 @@ async function fetchPreview(url: string): Promise<Partial<LinkPreview>> {
 		{ selector: 'meta[name="twitter:description"]', attr: "content" },
 	]);
 
-	const image = firstMetaValue($, [
+	const rawImage = firstMetaValue($, [
 		{ selector: 'meta[property="og:image"]', attr: "content" },
 		{ selector: 'meta[name="twitter:image"]', attr: "content" },
 	]);
@@ -162,6 +156,10 @@ async function fetchPreview(url: string): Promise<Partial<LinkPreview>> {
 	const siteName = firstMetaValue($, [
 		{ selector: 'meta[property="og:site_name"]', attr: "content" },
 	]);
+
+	const image = rawImage
+		? resolvePreviewImageUrl(rawImage, response.url)
+		: undefined;
 
 	return {
 		title,
@@ -171,17 +169,11 @@ async function fetchPreview(url: string): Promise<Partial<LinkPreview>> {
 	};
 }
 
-function isCacheFresh(entry: LinkPreview | undefined): boolean {
-	if (!entry?.fetchedAt) {
-		return false;
-	}
-
-	const fetchedAt = Date.parse(entry.fetchedAt);
-	if (Number.isNaN(fetchedAt)) {
-		return false;
-	}
-
-	return Date.now() - fetchedAt < CACHE_TTL_MS;
+function hasSuccessfulPreview(entry: LinkPreview | undefined): boolean {
+	return Boolean(
+		entry?.fetchedAt &&
+			(entry.title || entry.description || entry.image || entry.siteName),
+	);
 }
 
 async function mapWithConcurrency<T, R>(
@@ -210,7 +202,9 @@ async function mapWithConcurrency<T, R>(
 async function main() {
 	const urls = extractLinkCardUrls().filter(isFetchableUrl);
 	const cache = readExistingCache();
-	const urlsToFetch = urls.filter((url) => !isCacheFresh(cache[url]));
+	const urlsToFetch = urls.filter(
+		(url) => !shouldSkipLinkPreviewFetch(cache[url]),
+	);
 
 	if (urlsToFetch.length === 0) {
 		console.log("No link previews to fetch.");
@@ -230,9 +224,14 @@ async function main() {
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			console.warn(`Failed to fetch ${url}: ${message}`);
-			if (!cache[url]) {
-				cache[url] = { fetchedAt: new Date().toISOString() };
+
+			if (hasSuccessfulPreview(cache[url])) {
+				return;
 			}
+
+			cache[url] = {
+				failedAt: new Date().toISOString(),
+			};
 		}
 	});
 

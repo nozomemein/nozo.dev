@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { getLinkPreview, getLinkPreviewCache } from "@/lib/link-previews";
+import { getLinkPreview, getLinkPreviewCache } from "@/lib/link/previews";
 
 describe("link previews", () => {
 	test("loads the generated cache", () => {

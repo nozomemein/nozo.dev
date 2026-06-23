@@ -6,7 +6,8 @@ export type LinkPreview = {
 	description?: string;
 	image?: string;
 	siteName?: string;
-	fetchedAt: string;
+	fetchedAt?: string;
+	failedAt?: string;
 };
 
 export type LinkPreviewCache = Record<string, LinkPreview>;
