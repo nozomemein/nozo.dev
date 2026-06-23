@@ -12,7 +12,7 @@ export default async function BlogIndexPage() {
 	const posts = await getAllPosts();
 
 	return (
-		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
+		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-6 sm:p-12">
 			<header className="space-y-2">
 				<h1 className="text-3xl font-semibold tracking-tight">Blog</h1>
 				<p className="text-sm text-neutral-600 dark:text-muted-foreground">
@@ -23,7 +23,7 @@ export default async function BlogIndexPage() {
 			<section>
 				<ul className="divide-y divide-neutral-200">
 					{posts.map((post) => (
-						<li key={post.slug} className="py-6">
+						<li key={post.slug} className="py-6 first:pt-0">
 							<Link
 								href={`/blog/${post.slug}`}
 								className="group block space-y-2"
