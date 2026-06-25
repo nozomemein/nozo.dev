@@ -8,6 +8,7 @@ export type PostFileFrontmatter = {
 	title: string;
 	description: string;
 	date: string;
+	updatedAt?: string;
 	tags?: string[];
 	status?: "draft" | "published";
 };
@@ -28,6 +29,14 @@ function parsePostFileFrontmatter(
 	}
 	if (typeof date !== "string" || Number.isNaN(Date.parse(date))) {
 		throw new Error(`Invalid frontmatter "date" in ${slug}`);
+	}
+
+	const updatedAt = data.updatedAt;
+	if (
+		typeof updatedAt !== "undefined" &&
+		(typeof updatedAt !== "string" || Number.isNaN(Date.parse(updatedAt)))
+	) {
+		throw new Error(`Invalid frontmatter "updatedAt" in ${slug}`);
 	}
 
 	const tags = data.tags;
@@ -51,6 +60,7 @@ function parsePostFileFrontmatter(
 		title,
 		description,
 		date,
+		updatedAt: updatedAt as string | undefined,
 		tags: tags as string[] | undefined,
 		status: status as "draft" | "published" | undefined,
 	};

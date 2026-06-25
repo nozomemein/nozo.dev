@@ -12,6 +12,7 @@ export type BaseFrontmatter = {
 
 export type PostFrontmatter = BaseFrontmatter & {
 	date: string;
+	updatedAt?: string;
 	tags?: string[];
 	status?: "draft" | "published";
 };
@@ -78,10 +79,19 @@ function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
 		throw new Error(`Invalid frontmatter "date" in ${slug}`);
 	}
 
+	const updatedAt = frontmatter.updatedAt;
+	if (
+		typeof updatedAt !== "undefined" &&
+		(typeof updatedAt !== "string" || Number.isNaN(Date.parse(updatedAt)))
+	) {
+		throw new Error(`Invalid frontmatter "updatedAt" in ${slug}`);
+	}
+
 	return {
 		title: frontmatter.title as string,
 		description: frontmatter.description as string,
 		date,
+		updatedAt: updatedAt as string | undefined,
 		tags: tags as string[] | undefined,
 		status: status as "draft" | "published" | undefined,
 	};

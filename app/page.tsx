@@ -1,9 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
+import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
+
+const title = config.site.name;
+const description = config.site.homeDescription;
+const imagePath = config.ogImagePaths.home;
 
 export const metadata: Metadata = {
+	title,
+	description,
 	alternates: { canonical: "/" },
+	openGraph: buildPageOpenGraph({
+		title,
+		description,
+		path: "/",
+		imagePath,
+	}),
+	twitter: buildPageTwitter(title, description, imagePath),
 };
 
 export default function Home() {
