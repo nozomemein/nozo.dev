@@ -5,6 +5,7 @@ import { buildBlogPostingJsonLd } from "@/lib/blog-json-ld";
 import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
 import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
 import { getAllSlugs, getPostModule } from "@/lib/posts";
+import { serializeJsonLd } from "@/lib/serialize-json-ld";
 
 export const dynamicParams = false;
 
@@ -67,7 +68,7 @@ export default async function BlogPostPage({
 			<script
 				type="application/ld+json"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized from trusted build-time data
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
 			/>
 			<article className="space-y-6">
 				<header className="space-y-3">
