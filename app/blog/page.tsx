@@ -36,36 +36,42 @@ export default async function BlogIndexPage() {
 			</header>
 
 			<section>
-				<ul className="divide-y divide-neutral-200">
-					{posts.map((post) => (
-						<li key={post.slug} className="py-6 first:pt-0">
-							<Link
-								href={`/blog/${post.slug}`}
-								className="group block space-y-2"
-							>
-								<h2 className="text-xl font-semibold tracking-tight group-hover:underline">
-									{post.frontmatter.title}
-								</h2>
-								<p className="text-sm text-neutral-600 dark:text-muted-foreground">
-									{post.frontmatter.description}
-								</p>
-								<div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
-									<time dateTime={post.frontmatter.date}>
-										{post.frontmatter.date}
-									</time>
-									{post.frontmatter.tags?.length ? (
-										<span aria-hidden="true">•</span>
-									) : null}
-									{post.frontmatter.tags?.map((tag) => (
-										<Badge key={tag} variant="secondary" className="text-xs">
-											#{tag}
-										</Badge>
-									))}
-								</div>
-							</Link>
-						</li>
-					))}
-				</ul>
+				{posts.length === 0 ? (
+					<p className="py-6 text-sm text-neutral-600 dark:text-muted-foreground">
+						まだ記事がありません
+					</p>
+				) : (
+					<ul className="divide-y divide-neutral-200">
+						{posts.map((post) => (
+							<li key={post.slug} className="py-6 first:pt-0">
+								<Link
+									href={`/blog/${post.slug}`}
+									className="group block space-y-2"
+								>
+									<h2 className="text-xl font-semibold tracking-tight group-hover:underline">
+										{post.frontmatter.title}
+									</h2>
+									<p className="text-sm text-neutral-600 dark:text-muted-foreground">
+										{post.frontmatter.description}
+									</p>
+									<div className="flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+										<time dateTime={post.frontmatter.date}>
+											{post.frontmatter.date}
+										</time>
+										{post.frontmatter.tags?.length ? (
+											<span aria-hidden="true">•</span>
+										) : null}
+										{post.frontmatter.tags?.map((tag) => (
+											<Badge key={tag} variant="secondary" className="text-xs">
+												#{tag}
+											</Badge>
+										))}
+									</div>
+								</Link>
+							</li>
+						))}
+					</ul>
+				)}
 			</section>
 		</main>
 	);
