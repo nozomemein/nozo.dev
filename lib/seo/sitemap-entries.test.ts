@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildSitemapEntries } from "@/lib/sitemap-entries";
+import { buildSitemapEntries } from "@/lib/seo/sitemap-entries";
 
 const origin = "https://nozo.dev";
 

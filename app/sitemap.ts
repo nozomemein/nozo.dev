@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { config } from "@/lib/constants";
-import { getPostFrontmatterBySlug } from "@/lib/post-frontmatter";
-import { getAllSlugs } from "@/lib/posts";
-import { buildSitemapEntries } from "@/lib/sitemap-entries";
+import { getPostFrontmatterBySlug } from "@/lib/blog/frontmatter";
+import { getAllSlugs } from "@/lib/blog/posts";
+import { config } from "@/lib/seo/site";
+import { buildSitemapEntries } from "@/lib/seo/sitemap-entries";
 
 export const dynamic = "force-static";
 

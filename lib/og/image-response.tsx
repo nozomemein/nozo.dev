@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { config } from "@/lib/constants";
 import { ogImageTheme } from "@/lib/og/colors";
+import { config } from "@/lib/seo/site";
 
 export const ogImageSize = { width: 1200, height: 630 };
 export const ogImageContentType = "image/png";

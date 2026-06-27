@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts } from "@/lib/blog/posts";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { config } from "@/lib/seo/site";
 
 const title = "Blog";
 const description = config.site.blogDescription;

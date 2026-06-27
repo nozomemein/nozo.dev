@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import {
 	getPostFreshnessDate,
 	type PostFrontmatterFields,
-} from "@/lib/validate-post-frontmatter";
+} from "@/lib/blog/validate-frontmatter";
 
 export type SitemapPost = {
 	slug: string;

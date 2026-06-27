@@ -1,5 +1,5 @@
-import { config } from "@/lib/constants";
-import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
+import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
+import { config } from "@/lib/seo/site";
 
 export type BlogPostingFrontmatter = {
 	title: string;

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { getAllSlugs } from "@/lib/posts";
+import { getAllSlugs } from "@/lib/blog/posts";
 
 describe("getAllSlugs", () => {
 	test("returns published blog slugs", () => {

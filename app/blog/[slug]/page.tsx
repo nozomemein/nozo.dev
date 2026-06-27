@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { buildBlogPostingJsonLd } from "@/lib/blog-json-ld";
-import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
-import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
-import { getAllSlugs, getPostModule } from "@/lib/posts";
-import { serializeJsonLd } from "@/lib/serialize-json-ld";
+import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
+import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
+import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
+import { config } from "@/lib/seo/site";
 
 export const dynamicParams = false;
 

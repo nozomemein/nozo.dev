@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
-import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { config } from "@/lib/seo/site";
 
 const title = config.site.name;
 const description = config.site.homeDescription;

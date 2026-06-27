@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { config } from "@/lib/constants";
+import { config } from "@/lib/seo/site";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/theme-provider";

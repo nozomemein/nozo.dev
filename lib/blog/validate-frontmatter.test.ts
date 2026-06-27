@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { validatePostFrontmatterFields } from "@/lib/validate-post-frontmatter";
+import { validatePostFrontmatterFields } from "@/lib/blog/validate-frontmatter";
 
 describe("validatePostFrontmatterFields", () => {
 	test("accepts a valid published post", () => {

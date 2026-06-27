@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildBlogPostingJsonLd } from "@/lib/blog-json-ld";
-import { config } from "@/lib/constants";
+import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
+import { config } from "@/lib/seo/site";
 
 describe("buildBlogPostingJsonLd", () => {
 	const frontmatter = {

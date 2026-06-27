@@ -5,7 +5,7 @@ import path from "node:path";
 import {
 	getBlogPostOgImagePath,
 	getPostFrontmatterBySlug,
-} from "@/lib/post-frontmatter";
+} from "@/lib/blog/frontmatter";
 
 const tempDirs: string[] = [];
 

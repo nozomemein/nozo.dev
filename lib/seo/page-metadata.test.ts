@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildPageOpenGraph, buildPageTwitter, config } from "@/lib/constants";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { config } from "@/lib/seo/site";
 
 describe("buildPageOpenGraph", () => {
 	test("builds website metadata with defaults", () => {

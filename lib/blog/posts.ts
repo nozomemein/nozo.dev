@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 import {
 	type PostFrontmatterFields,
 	validatePostFrontmatterFields,
-} from "@/lib/validate-post-frontmatter";
+} from "@/lib/blog/validate-frontmatter";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 

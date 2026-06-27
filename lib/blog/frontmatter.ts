@@ -4,7 +4,7 @@ import matter from "gray-matter";
 import {
 	type PostFrontmatterFields,
 	validatePostFrontmatterFields,
-} from "@/lib/validate-post-frontmatter";
+} from "@/lib/blog/validate-frontmatter";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 

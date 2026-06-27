@@ -28,7 +28,7 @@ Personal portfolio and blog at [nozo.dev](https://nozo.dev).
 - Static export (`output: "export"`) deployed to **Cloudflare Pages** via `wrangler.jsonc` (build output in `out/`)
 
 ```
-content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build → out/ → Cloudflare Pages
+content/blog/*.mdx → lib/blog/posts.ts → app/blog/[slug]/page.tsx → next build → out/ → Cloudflare Pages
 ```
 
 ## Repository layout
@@ -39,8 +39,14 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `components/` | UI components (shadcn/ui + typography) |
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
-| `lib/posts.ts` | Blog post loading, frontmatter validation |
-| `lib/post-frontmatter.ts` | Read blog frontmatter from MDX files without importing MDX |
+| `lib/blog/posts.ts` | Blog post loading via MDX import |
+| `lib/blog/frontmatter.ts` | Read blog frontmatter from MDX files without importing MDX |
+| `lib/blog/validate-frontmatter.ts` | Shared frontmatter validation |
+| `lib/seo/site.ts` | Site config constants |
+| `lib/seo/page-metadata.ts` | OGP and Twitter metadata helpers |
+| `lib/seo/blog-json-ld.ts` | BlogPosting JSON-LD builder |
+| `lib/seo/serialize-json-ld.ts` | Safe JSON-LD serialization |
+| `lib/seo/sitemap-entries.ts` | Sitemap entry builder |
 | `lib/link/card-urls.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
 | `lib/link/preview-utils.ts` | Link preview cache TTL and image URL helpers |
 | `lib/link/previews.ts` | LinkCard OGP preview cache loader |
@@ -53,7 +59,7 @@ content/blog/*.mdx → lib/posts.ts → app/blog/[slug]/page.tsx → next build 
 | `assets/fonts/` | Fonts used by generated OG images |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
-| `lib/constants.ts` | Site metadata |
+| `app/sitemap.ts` | Build-time sitemap generation |
 | `.github/workflows/ci.yml` | CI (Biome check + test + build + zizmor) |
 
 ## Dev environment
