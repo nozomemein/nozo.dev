@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
-import { jsonLdScript } from "@/lib/metadata/json-ld";
+import { jsonLdScript, webSiteJsonLd } from "@/lib/metadata/json-ld";
 import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
-import { buildWebSiteJsonLd } from "@/lib/metadata/site-json-ld";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-	const jsonLd = buildWebSiteJsonLd();
+	const jsonLd = webSiteJsonLd();
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-start gap-12 px-6 py-24">
