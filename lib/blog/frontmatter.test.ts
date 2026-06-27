@@ -2,10 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-	getBlogPostOgImagePath,
-	getPostFrontmatterBySlug,
-} from "@/lib/blog/frontmatter";
+import { getPostFrontmatterBySlug } from "@/lib/blog/frontmatter";
 
 const tempDirs: string[] = [];
 
@@ -69,11 +66,5 @@ describe("getPostFrontmatterBySlug", () => {
 		expect(() =>
 			getPostFrontmatterBySlug("bad-updated-at", { blogDir }),
 		).toThrow('Invalid frontmatter "updatedAt"');
-	});
-});
-
-describe("getBlogPostOgImagePath", () => {
-	test("returns the opengraph-image route path", () => {
-		expect(getBlogPostOgImagePath("hello")).toBe("/blog/hello/opengraph-image");
 	});
 });

@@ -3,7 +3,7 @@ import {
 	ogImageContentType,
 	ogImageSize,
 } from "@/lib/og/image-response";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
 
 export const size = ogImageSize;
 export const contentType = ogImageContentType;

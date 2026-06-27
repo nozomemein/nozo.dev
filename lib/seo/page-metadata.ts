@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
 
 type OpenGraphPageOptions = {
 	title: string;

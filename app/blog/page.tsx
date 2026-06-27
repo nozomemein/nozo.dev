@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getAllPosts } from "@/lib/blog/posts";
 import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
+import { ogImagePaths } from "@/lib/site/routes";
 
 const title = "Blog";
 const description = config.site.blogDescription;
-const imagePath = config.ogImagePaths.blog;
+const imagePath = ogImagePaths.blog;
 
 export const metadata: Metadata = {
 	title,

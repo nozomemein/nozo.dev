@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
 import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
+import { ogImagePaths } from "@/lib/site/routes";
 
 const title = config.site.name;
 const description = config.site.homeDescription;
-const imagePath = config.ogImagePaths.home;
+const imagePath = ogImagePaths.home;
 
 export const metadata: Metadata = {
 	title,

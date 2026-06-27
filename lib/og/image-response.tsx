@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { ogImageTheme } from "@/lib/og/colors";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
 
 export const ogImageSize = { width: 1200, height: 630 };
 export const ogImageContentType = "image/png";

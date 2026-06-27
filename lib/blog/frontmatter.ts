@@ -24,7 +24,3 @@ export function getPostFrontmatterBySlug(
 	const { data } = matter(raw);
 	return validatePostFrontmatterFields(data, slug);
 }
-
-export function getBlogPostOgImagePath(slug: string): string {
-	return `/blog/${slug}/opengraph-image`;
-}

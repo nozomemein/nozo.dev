@@ -1,5 +1,5 @@
-import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
+import { blogPostOgImagePath } from "@/lib/site/routes";
 
 export type BlogPostingFrontmatter = {
 	title: string;
@@ -12,7 +12,7 @@ export function buildBlogPostingJsonLd(
 	slug: string,
 	frontmatter: BlogPostingFrontmatter,
 ) {
-	const ogImagePath = getBlogPostOgImagePath(slug);
+	const ogImagePath = blogPostOgImagePath(slug);
 
 	return {
 		"@context": "https://schema.org",

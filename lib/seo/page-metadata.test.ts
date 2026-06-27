@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
+import { ogImagePaths } from "@/lib/site/routes";
 
 describe("buildPageOpenGraph", () => {
 	test("builds website metadata with defaults", () => {
@@ -8,7 +9,7 @@ describe("buildPageOpenGraph", () => {
 			title: config.site.name,
 			description: config.site.homeDescription,
 			path: "/",
-			imagePath: config.ogImagePaths.home,
+			imagePath: ogImagePaths.home,
 		});
 
 		expect(openGraph).toEqual({
@@ -18,7 +19,7 @@ describe("buildPageOpenGraph", () => {
 			siteName: config.site.name,
 			locale: config.site.locale,
 			type: "website",
-			images: [{ url: config.ogImagePaths.home }],
+			images: [{ url: ogImagePaths.home }],
 		});
 	});
 
@@ -70,14 +71,14 @@ describe("buildPageTwitter", () => {
 		const twitter = buildPageTwitter(
 			"Test title",
 			"Test description",
-			config.ogImagePaths.home,
+			ogImagePaths.home,
 		);
 
 		expect(twitter).toEqual({
 			card: "summary_large_image",
 			title: "Test title",
 			description: "Test description",
-			images: [config.ogImagePaths.home],
+			images: [ogImagePaths.home],
 		});
 	});
 });

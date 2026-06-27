@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
 import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
 import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
 import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
 import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
+import { blogPostOgImagePath } from "@/lib/site/routes";
 import { DemotedMdxH1 } from "@/mdx-components";
 
 export const dynamicParams = false;
@@ -29,7 +29,7 @@ export async function generateMetadata({
 
 	const title = frontmatter.title;
 	const description = frontmatter.description;
-	const imagePath = getBlogPostOgImagePath(slug);
+	const imagePath = blogPostOgImagePath(slug);
 	const path = `/blog/${slug}`;
 
 	return {
