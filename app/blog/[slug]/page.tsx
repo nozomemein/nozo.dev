@@ -7,6 +7,7 @@ import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
 import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
 import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
 import { config } from "@/lib/seo/site";
+import { DemotedMdxH1 } from "@/mdx-components";
 
 export const dynamicParams = false;
 
@@ -93,7 +94,7 @@ export default async function BlogPostPage({
 				</header>
 
 				<div className="space-y-6">
-					<Post />
+					<Post components={{ h1: DemotedMdxH1 }} />
 				</div>
 			</article>
 		</main>

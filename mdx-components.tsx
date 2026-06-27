@@ -1,6 +1,13 @@
 import type { MDXComponents } from "mdx/types";
+import type { ComponentPropsWithoutRef } from "react";
 import { LinkCard } from "@/components/link-card";
 import { cn } from "@/lib/utils";
+
+export function DemotedMdxH1(props: ComponentPropsWithoutRef<"h1">) {
+	return (
+		<h2 {...props} className="mt-8 text-3xl font-semibold tracking-tight" />
+	);
+}
 
 function isExternalUrl(href: string | undefined): boolean {
 	if (!href) return false;
