@@ -1,18 +1,13 @@
 import { notFound } from "next/navigation";
-import { getPostFrontmatterBySlug } from "@/lib/blog/frontmatter";
-import { getAllSlugs } from "@/lib/blog/posts";
-import {
-	createOgImageResponse,
-	ogImageContentType,
-	ogImageSize,
-} from "@/lib/og/image-response";
+import { loadBlogFrontmatter } from "@/lib/content/blog/files";
+import { listBlogSlugs } from "@/lib/content/blog/mdx";
+import { contentType, createOgImage, size } from "@/lib/og-image/response";
 
-export const size = ogImageSize;
-export const contentType = ogImageContentType;
+export { contentType, size };
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
-	return getAllSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
+	return listBlogSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
 }
 
 export default async function OpenGraphImage({
@@ -21,13 +16,13 @@ export default async function OpenGraphImage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
-	const frontmatter = getPostFrontmatterBySlug(slug);
+	const frontmatter = loadBlogFrontmatter(slug);
 
 	if (!frontmatter || frontmatter.status === "draft") {
 		notFound();
 	}
 
-	return createOgImageResponse({
+	return createOgImage({
 		title: frontmatter.title,
 	});
 }

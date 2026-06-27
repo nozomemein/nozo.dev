@@ -1,11 +1,11 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
-import { ogImageTheme } from "@/lib/og/colors";
+import { theme } from "@/lib/og-image/theme";
 import { config } from "@/lib/site/config";
 
-export const ogImageSize = { width: 1200, height: 630 };
-export const ogImageContentType = "image/png";
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
 
 let fontDataPromise: Promise<ArrayBuffer> | null = null;
 
@@ -23,16 +23,13 @@ function getFontData() {
 	return fontDataPromise;
 }
 
-type CreateOgImageResponseOptions = {
+type CreateOgImageOptions = {
 	title: string;
 	/** Omit for site name; pass `null` to hide the footer row. */
 	footer?: string | null;
 };
 
-export async function createOgImageResponse({
-	title,
-	footer,
-}: CreateOgImageResponseOptions) {
+export async function createOgImage({ title, footer }: CreateOgImageOptions) {
 	const fontData = await getFontData();
 	const footerText = footer === undefined ? config.site.name : footer;
 	const fonts = [
@@ -52,7 +49,7 @@ export async function createOgImageResponse({
 					alignItems: "center",
 					width: "100%",
 					height: "100%",
-					backgroundColor: ogImageTheme.background,
+					backgroundColor: theme.background,
 					padding: "80px",
 				}}
 			>
@@ -60,7 +57,7 @@ export async function createOgImageResponse({
 					style={{
 						fontSize: 64,
 						fontWeight: 700,
-						color: ogImageTheme.foreground,
+						color: theme.foreground,
 						fontFamily: "Noto Sans JP",
 						lineHeight: 1.3,
 					}}
@@ -68,7 +65,7 @@ export async function createOgImageResponse({
 					{title}
 				</div>
 			</div>,
-			{ ...ogImageSize, fonts },
+			{ ...size, fonts },
 		);
 	}
 
@@ -80,7 +77,7 @@ export async function createOgImageResponse({
 				justifyContent: "space-between",
 				width: "100%",
 				height: "100%",
-				backgroundColor: ogImageTheme.background,
+				backgroundColor: theme.background,
 				padding: "80px",
 			}}
 		>
@@ -91,7 +88,7 @@ export async function createOgImageResponse({
 					alignItems: "center",
 					fontSize: 64,
 					fontWeight: 700,
-					color: ogImageTheme.foreground,
+					color: theme.foreground,
 					fontFamily: "Noto Sans JP",
 					lineHeight: 1.3,
 				}}
@@ -102,13 +99,13 @@ export async function createOgImageResponse({
 				style={{
 					fontSize: 28,
 					fontWeight: 500,
-					color: ogImageTheme.mutedForeground,
+					color: theme.mutedForeground,
 					fontFamily: "Noto Sans JP",
 				}}
 			>
 				{footerText}
 			</div>
 		</div>,
-		{ ...ogImageSize, fonts },
+		{ ...size, fonts },
 	);
 }
