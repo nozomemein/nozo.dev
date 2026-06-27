@@ -48,6 +48,7 @@ content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → 
 | `lib/metadata/blog-posting.ts` | BlogPosting JSON-LD builder |
 | `lib/metadata/json-ld.ts` | Safe JSON-LD serialization |
 | `lib/metadata/sitemap.ts` | Sitemap entry builder |
+| `lib/metadata/feed.ts` | RSS 2.0 feed builder |
 | `lib/link-card/extract-hrefs.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
 | `lib/link-preview/types.ts` | Link preview cache types |
 | `lib/link-preview/cache.ts` | LinkCard OGP preview cache loader |
@@ -62,6 +63,7 @@ content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → 
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
 | `app/sitemap.ts` | Build-time sitemap generation |
+| `app/feed.xml/route.ts` | Build-time RSS feed generation |
 | `.github/workflows/ci.yml` | CI (Biome check + test + build + zizmor) |
 
 ## Dev environment

@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { listBlogSlugs, loadBlogPost } from "@/lib/content/blog/mdx";
 import { blogPostingJsonLd, jsonLdScript } from "@/lib/metadata/json-ld";
-import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import {
+	pageAlternates,
+	pageOpenGraph,
+	pageTwitter,
+} from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { blogPostOgImagePath } from "@/lib/site/routes";
 import { DemotedMdxH1 } from "@/mdx-components";
@@ -34,7 +38,7 @@ export async function generateMetadata({
 	return {
 		title,
 		description,
-		alternates: { canonical: path },
+		alternates: pageAlternates(path),
 		openGraph: pageOpenGraph({
 			title,
 			description,

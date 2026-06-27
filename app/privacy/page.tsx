@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import PrivacyContent, { frontmatter } from "@/content/pages/privacy.mdx";
+import { pageAlternates } from "@/lib/metadata/page";
 
 export const metadata: Metadata = {
 	title: frontmatter.title,
 	description: frontmatter.description,
-	alternates: { canonical: "/privacy" },
+	alternates: pageAlternates("/privacy"),
 	robots: { index: true, follow: true },
 };
 
