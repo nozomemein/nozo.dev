@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import type { ComponentType } from "react";
+import type { MDXContent } from "mdx/types";
 import {
 	type PostFrontmatterFields,
 	validatePostFrontmatterFields,
@@ -20,11 +20,11 @@ export type PostSummary = { slug: string; frontmatter: PostFrontmatter };
 export type PostModule = {
 	slug: string;
 	frontmatter: PostFrontmatter;
-	Component: ComponentType;
+	Component: MDXContent;
 };
 
 type MdxModule = {
-	default?: ComponentType;
+	default?: MDXContent;
 	frontmatter?: unknown;
 };
 
