@@ -20,7 +20,6 @@ export function GET() {
 		origin,
 		siteName: config.site.name,
 		siteDescription: config.site.description,
-		authorName: config.site.authorName,
 		posts,
 	});
 

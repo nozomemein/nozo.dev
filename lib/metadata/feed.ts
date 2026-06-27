@@ -12,7 +12,6 @@ export type RssFeedOptions = {
 	origin: string;
 	siteName: string;
 	siteDescription: string;
-	authorName: string;
 	posts: FeedBlogPost[];
 };
 
@@ -53,7 +52,7 @@ function buildRssItem(origin: string, post: FeedBlogPost): string {
 }
 
 export function buildRssFeed(options: RssFeedOptions): string {
-	const { origin, siteName, siteDescription, authorName, posts } = options;
+	const { origin, siteName, siteDescription, posts } = options;
 	const feedUrl = `${origin}/feed.xml`;
 	const blogUrl = `${origin}/blog`;
 	const sortedPosts = sortPostsByFreshness(posts);
@@ -72,7 +71,6 @@ export function buildRssFeed(options: RssFeedOptions): string {
 <link>${escapeXml(blogUrl)}</link>
 <description>${escapeXml(siteDescription)}</description>
 <language>ja</language>
-<managingEditor>${escapeXml(authorName)}</managingEditor>
 <lastBuildDate>${latestPubDate}</lastBuildDate>
 <atom:link href="${escapeXml(feedUrl)}" rel="self" type="application/rss+xml"/>
 ${items}

@@ -7,7 +7,6 @@ const feedOptions = {
 	origin,
 	siteName: "nozo.dev",
 	siteDescription: "技術メモと備忘録をまとめるブログ。",
-	authorName: "Nozomi Hijikata",
 };
 
 describe("escapeXml", () => {
