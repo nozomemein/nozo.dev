@@ -23,9 +23,21 @@ export type BlogPost = {
 };
 
 type MdxModule = {
-	default?: MDXContent;
+	default: MDXContent;
 	frontmatter?: unknown;
 };
+
+function isMdxModule(value: unknown): value is MdxModule {
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
+
+	if (!("default" in value)) {
+		return false;
+	}
+
+	return typeof value.default === "function";
+}
 
 function getFrontmatterStatusFromFile(filePath: string) {
 	const raw = fs.readFileSync(filePath, "utf8");
@@ -62,26 +74,26 @@ export function listBlogSlugs(_options?: {
 }
 
 export async function loadBlogPost(slug: string): Promise<BlogPost> {
-	let mod: MdxModule;
+	let loaded: unknown;
 
 	try {
-		mod = (await import(`@/content/blog/${slug}.mdx`)) as MdxModule;
+		loaded = await import(`@/content/blog/${slug}.mdx`);
 	} catch {
 		throw new Error(`Post not found: ${slug}`);
 	}
 
-	if (!mod.default) {
+	if (!isMdxModule(loaded)) {
 		throw new Error(`Missing default export in ${slug}`);
 	}
 
-	const frontmatter = parseBlogFrontmatter(mod.frontmatter, slug, {
+	const frontmatter = parseBlogFrontmatter(loaded.frontmatter, slug, {
 		missingFrontmatterError: `Missing frontmatter export in ${slug}`,
 	});
 
 	return {
 		slug,
 		frontmatter,
-		Component: mod.default,
+		Component: loaded.default,
 	};
 }
 

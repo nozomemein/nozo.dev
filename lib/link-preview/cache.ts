@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parseLinkPreviewCache } from "@/lib/link-preview/parse";
 import type { LinkPreview, LinkPreviewCache } from "@/lib/link-preview/types";
 
-const CACHE_PATH = path.join(
+export const linkPreviewCachePath = path.join(
 	process.cwd(),
 	"content",
 	"generated",
@@ -11,18 +12,26 @@ const CACHE_PATH = path.join(
 
 let cachedPreviews: LinkPreviewCache | null = null;
 
+export function readLinkPreviewCacheFile(
+	filePath = linkPreviewCachePath,
+): LinkPreviewCache {
+	if (!fs.existsSync(filePath)) {
+		return {};
+	}
+
+	try {
+		return parseLinkPreviewCache(JSON.parse(fs.readFileSync(filePath, "utf8")));
+	} catch {
+		return {};
+	}
+}
+
 export function loadLinkPreviewCache(): LinkPreviewCache {
 	if (cachedPreviews) {
 		return cachedPreviews;
 	}
 
-	if (!fs.existsSync(CACHE_PATH)) {
-		cachedPreviews = {};
-		return cachedPreviews;
-	}
-
-	const raw = fs.readFileSync(CACHE_PATH, "utf8");
-	cachedPreviews = JSON.parse(raw) as LinkPreviewCache;
+	cachedPreviews = readLinkPreviewCacheFile();
 	return cachedPreviews;
 }
 

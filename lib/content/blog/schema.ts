@@ -9,11 +9,49 @@ export type BlogFrontmatter = {
 	status?: "draft" | "published";
 };
 
-const REQUIRED_FIELDS: Array<"title" | "description" | "date"> = [
-	"title",
-	"description",
-	"date",
-];
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function requireString(
+	record: Record<string, unknown>,
+	field: string,
+	slug: string,
+): string {
+	const value = record[field];
+	if (typeof value !== "string" || value.trim().length === 0) {
+		throw new Error(`Missing required frontmatter "${field}" in ${slug}`);
+	}
+
+	return value;
+}
+
+function parseOptionalTags(value: unknown, slug: string): string[] | undefined {
+	if (typeof value === "undefined") {
+		return undefined;
+	}
+
+	if (!Array.isArray(value) || value.some((tag) => typeof tag !== "string")) {
+		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
+	}
+
+	return value;
+}
+
+function parseOptionalStatus(
+	value: unknown,
+	slug: string,
+): "draft" | "published" | undefined {
+	if (typeof value === "undefined") {
+		return undefined;
+	}
+
+	if (value !== "draft" && value !== "published") {
+		throw new Error(`Invalid frontmatter "status" in ${slug}`);
+	}
+
+	return value;
+}
 
 function parseIsoDateField(
 	value: unknown,
@@ -39,42 +77,19 @@ export function parseBlogFrontmatter(
 	const missingError =
 		options?.missingFrontmatterError ?? `Missing frontmatter export in ${slug}`;
 
-	if (!data || typeof data !== "object") {
+	if (!isRecord(data)) {
 		throw new Error(missingError);
 	}
 
-	const frontmatter = data as Record<string, unknown>;
+	const title = requireString(data, "title", slug);
+	const description = requireString(data, "description", slug);
+	const date = parseIsoDateField(data.date, "date", slug);
+	const tags = parseOptionalTags(data.tags, slug);
+	const status = parseOptionalStatus(data.status, slug);
 
-	for (const field of REQUIRED_FIELDS) {
-		const value = frontmatter[field];
-		if (typeof value !== "string" || value.trim().length === 0) {
-			throw new Error(`Missing required frontmatter "${field}" in ${slug}`);
-		}
-	}
-
-	const tags = frontmatter.tags;
-	if (
-		typeof tags !== "undefined" &&
-		(!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string"))
-	) {
-		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
-	}
-
-	const status = frontmatter.status;
-	if (
-		typeof status !== "undefined" &&
-		status !== "draft" &&
-		status !== "published"
-	) {
-		throw new Error(`Invalid frontmatter "status" in ${slug}`);
-	}
-
-	const date = parseIsoDateField(frontmatter.date, "date", slug);
-
-	const updatedAtRaw = frontmatter.updatedAt;
 	let updatedAt: string | undefined;
-	if (typeof updatedAtRaw !== "undefined") {
-		updatedAt = parseIsoDateField(updatedAtRaw, "updatedAt", slug);
+	if (typeof data.updatedAt !== "undefined") {
+		updatedAt = parseIsoDateField(data.updatedAt, "updatedAt", slug);
 		if (Date.parse(updatedAt) < Date.parse(date)) {
 			throw new Error(
 				`Invalid frontmatter "updatedAt" must be on or after "date" in ${slug}`,
@@ -83,12 +98,12 @@ export function parseBlogFrontmatter(
 	}
 
 	return {
-		title: frontmatter.title as string,
-		description: frontmatter.description as string,
+		title,
+		description,
 		date,
 		updatedAt,
-		tags: tags as string[] | undefined,
-		status: status as "draft" | "published" | undefined,
+		tags,
+		status,
 	};
 }
 

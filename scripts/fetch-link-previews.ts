@@ -4,17 +4,15 @@ import * as cheerio from "cheerio";
 import { blogDir } from "@/lib/content/blog/paths";
 import { extractLinkCardHrefs } from "@/lib/link-card/extract-hrefs";
 import {
+	linkPreviewCachePath,
+	readLinkPreviewCacheFile,
+} from "@/lib/link-preview/cache";
+import {
 	resolveImageUrl,
 	shouldSkipFetch,
 } from "@/lib/link-preview/fetch-policy";
-import type { LinkPreview, LinkPreviewCache } from "@/lib/link-preview/types";
+import type { LinkPreview } from "@/lib/link-preview/types";
 
-const OUTPUT_PATH = path.join(
-	process.cwd(),
-	"content",
-	"generated",
-	"link-previews.json",
-);
 const FETCH_TIMEOUT_MS = 5000;
 const CONCURRENCY = 4;
 
@@ -70,18 +68,6 @@ function isFetchableUrl(url: string): boolean {
 		return parsed.protocol === "http:" || parsed.protocol === "https:";
 	} catch {
 		return false;
-	}
-}
-
-function readExistingCache(): LinkPreviewCache {
-	if (!fs.existsSync(OUTPUT_PATH)) {
-		return {};
-	}
-
-	try {
-		return JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf8")) as LinkPreviewCache;
-	} catch {
-		return {};
 	}
 }
 
@@ -199,7 +185,7 @@ async function mapWithConcurrency<T, R>(
 
 async function main() {
 	const urls = extractLinkCardUrls().filter(isFetchableUrl);
-	const cache = readExistingCache();
+	const cache = readLinkPreviewCacheFile();
 	const urlsToFetch = urls.filter((url) => !shouldSkipFetch(cache[url]));
 
 	if (urlsToFetch.length === 0) {
@@ -231,9 +217,12 @@ async function main() {
 		}
 	});
 
-	fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-	fs.writeFileSync(OUTPUT_PATH, `${JSON.stringify(cache, null, "\t")}\n`);
-	console.log(`Saved link previews to ${OUTPUT_PATH}`);
+	fs.mkdirSync(path.dirname(linkPreviewCachePath), { recursive: true });
+	fs.writeFileSync(
+		linkPreviewCachePath,
+		`${JSON.stringify(cache, null, "\t")}\n`,
+	);
+	console.log(`Saved link previews to ${linkPreviewCachePath}`);
 }
 
 main().catch((error) => {
