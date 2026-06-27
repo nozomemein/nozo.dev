@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as cheerio from "cheerio";
+import { blogDir } from "@/lib/content/blog/paths";
 import { extractLinkCardHrefs } from "@/lib/link-card/extract-hrefs";
 import {
 	resolveImageUrl,
@@ -8,7 +9,6 @@ import {
 } from "@/lib/link-preview/fetch-policy";
 import type { LinkPreview, LinkPreviewCache } from "@/lib/link-preview/types";
 
-const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 const OUTPUT_PATH = path.join(
 	process.cwd(),
 	"content",
@@ -36,13 +36,13 @@ function getFrontmatterStatusFromFile(filePath: string): string | undefined {
 }
 
 function extractLinkCardUrls(): string[] {
-	if (!fs.existsSync(BLOG_DIR)) {
+	if (!fs.existsSync(blogDir)) {
 		return [];
 	}
 
 	const urls = new Set<string>();
 
-	for (const entry of fs.readdirSync(BLOG_DIR, { withFileTypes: true })) {
+	for (const entry of fs.readdirSync(blogDir, { withFileTypes: true })) {
 		if (!entry.isFile() || !entry.name.endsWith(".mdx")) {
 			continue;
 		}
@@ -50,7 +50,7 @@ function extractLinkCardUrls(): string[] {
 			continue;
 		}
 
-		const filePath = path.join(BLOG_DIR, entry.name);
+		const filePath = path.join(blogDir, entry.name);
 		if (getFrontmatterStatusFromFile(filePath) === "draft") {
 			continue;
 		}
