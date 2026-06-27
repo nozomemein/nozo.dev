@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as cheerio from "cheerio";
-import { extractLinkCardHrefs } from "@/lib/link/card-urls";
+import { extractLinkCardHrefs } from "@/lib/link-card/extract-hrefs";
 import {
-	resolvePreviewImageUrl,
-	shouldSkipLinkPreviewFetch,
-} from "@/lib/link/preview-utils";
-import type { LinkPreview, LinkPreviewCache } from "@/lib/link/previews";
+	resolveImageUrl,
+	shouldSkipFetch,
+} from "@/lib/link-preview/fetch-policy";
+import type { LinkPreview, LinkPreviewCache } from "@/lib/link-preview/types";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 const OUTPUT_PATH = path.join(
@@ -157,9 +157,7 @@ async function fetchPreview(url: string): Promise<Partial<LinkPreview>> {
 		{ selector: 'meta[property="og:site_name"]', attr: "content" },
 	]);
 
-	const image = rawImage
-		? resolvePreviewImageUrl(rawImage, response.url)
-		: undefined;
+	const image = rawImage ? resolveImageUrl(rawImage, response.url) : undefined;
 
 	return {
 		title,
@@ -202,9 +200,7 @@ async function mapWithConcurrency<T, R>(
 async function main() {
 	const urls = extractLinkCardUrls().filter(isFetchableUrl);
 	const cache = readExistingCache();
-	const urlsToFetch = urls.filter(
-		(url) => !shouldSkipLinkPreviewFetch(cache[url]),
-	);
+	const urlsToFetch = urls.filter((url) => !shouldSkipFetch(cache[url]));
 
 	if (urlsToFetch.length === 0) {
 		console.log("No link previews to fetch.");

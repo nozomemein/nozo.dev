@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { extractLinkCardHrefs } from "@/lib/link/card-urls";
+import { extractLinkCardHrefs } from "@/lib/link-card/extract-hrefs";
 
 describe("extractLinkCardHrefs", () => {
 	test("extracts href from the minimal self-closing form", () => {

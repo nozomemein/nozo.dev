@@ -1,16 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-
-export type LinkPreview = {
-	title?: string;
-	description?: string;
-	image?: string;
-	siteName?: string;
-	fetchedAt?: string;
-	failedAt?: string;
-};
-
-export type LinkPreviewCache = Record<string, LinkPreview>;
+import type { LinkPreview, LinkPreviewCache } from "@/lib/link-preview/types";
 
 const CACHE_PATH = path.join(
 	process.cwd(),
@@ -21,7 +11,7 @@ const CACHE_PATH = path.join(
 
 let cachedPreviews: LinkPreviewCache | null = null;
 
-export function getLinkPreviewCache(): LinkPreviewCache {
+export function loadLinkPreviewCache(): LinkPreviewCache {
 	if (cachedPreviews) {
 		return cachedPreviews;
 	}
@@ -36,6 +26,6 @@ export function getLinkPreviewCache(): LinkPreviewCache {
 	return cachedPreviews;
 }
 
-export function getLinkPreview(href: string): LinkPreview | undefined {
-	return getLinkPreviewCache()[href];
+export function getCachedLinkPreview(href: string): LinkPreview | undefined {
+	return loadLinkPreviewCache()[href];
 }
