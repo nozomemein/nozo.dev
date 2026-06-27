@@ -18,6 +18,11 @@ export const metadata: Metadata = {
 	},
 	description: config.site.description,
 	robots: { index: true, follow: true },
+	alternates: {
+		types: {
+			"application/rss+xml": "/feed.xml",
+		},
+	},
 };
 
 export default function RootLayout({

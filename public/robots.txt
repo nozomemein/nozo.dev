@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://nozo.dev/sitemap.xml
+Feed: https://nozo.dev/feed.xml
