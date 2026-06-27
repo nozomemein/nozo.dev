@@ -1,6 +1,6 @@
-export const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+export const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
-export type PostFrontmatterFields = {
+export type BlogFrontmatter = {
 	title: string;
 	description: string;
 	date: string;
@@ -20,7 +20,7 @@ function parseIsoDateField(
 	field: string,
 	slug: string,
 ): string {
-	if (typeof value !== "string" || !ISO_DATE_PATTERN.test(value)) {
+	if (typeof value !== "string" || !isoDatePattern.test(value)) {
 		throw new Error(`Invalid frontmatter "${field}" in ${slug}`);
 	}
 
@@ -31,11 +31,11 @@ function parseIsoDateField(
 	return value;
 }
 
-export function validatePostFrontmatterFields(
+export function parseBlogFrontmatter(
 	data: unknown,
 	slug: string,
 	options?: { missingFrontmatterError?: string },
-): PostFrontmatterFields {
+): BlogFrontmatter {
 	const missingError =
 		options?.missingFrontmatterError ?? `Missing frontmatter export in ${slug}`;
 
@@ -92,7 +92,7 @@ export function validatePostFrontmatterFields(
 	};
 }
 
-export function getPostFreshnessDate(frontmatter: {
+export function blogPostFreshnessDate(frontmatter: {
 	date: string;
 	updatedAt?: string;
 }): string {

@@ -3,23 +3,23 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { MDXContent } from "mdx/types";
 import {
-	type PostFrontmatterFields,
-	validatePostFrontmatterFields,
-} from "@/lib/blog/validate-frontmatter";
+	type BlogFrontmatter,
+	parseBlogFrontmatter,
+} from "@/lib/content/blog/schema";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
-export type BaseFrontmatter = {
+export type BlogFrontmatterBase = {
 	title: string;
 	description: string;
 };
 
-export type PostFrontmatter = PostFrontmatterFields;
+export type { BlogFrontmatter };
 
-export type PostSummary = { slug: string; frontmatter: PostFrontmatter };
-export type PostModule = {
+export type BlogPostSummary = { slug: string; frontmatter: BlogFrontmatter };
+export type BlogPost = {
 	slug: string;
-	frontmatter: PostFrontmatter;
+	frontmatter: BlogFrontmatter;
 	Component: MDXContent;
 };
 
@@ -35,13 +35,11 @@ function getFrontmatterStatusFromFile(filePath: string) {
 	return status === "draft" || status === "published" ? status : undefined;
 }
 
-function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
-	return validatePostFrontmatterFields(data, slug, {
-		missingFrontmatterError: `Missing frontmatter export in ${slug}`,
-	});
-}
+export { parseBlogFrontmatter };
 
-export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
+export function listBlogSlugs(_options?: {
+	includeDrafts?: boolean;
+}): string[] {
 	if (!fs.existsSync(BLOG_DIR)) {
 		return [];
 	}
@@ -64,9 +62,7 @@ export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {
 		.map((name) => name.replace(/\.mdx$/, ""));
 }
 
-export { validatePostFrontmatter };
-
-export async function getPostModule(slug: string): Promise<PostModule> {
+export async function loadBlogPost(slug: string): Promise<BlogPost> {
 	let mod: MdxModule;
 
 	try {
@@ -79,7 +75,9 @@ export async function getPostModule(slug: string): Promise<PostModule> {
 		throw new Error(`Missing default export in ${slug}`);
 	}
 
-	const frontmatter = validatePostFrontmatter(mod.frontmatter, slug);
+	const frontmatter = parseBlogFrontmatter(mod.frontmatter, slug, {
+		missingFrontmatterError: `Missing frontmatter export in ${slug}`,
+	});
 
 	return {
 		slug,
@@ -88,15 +86,15 @@ export async function getPostModule(slug: string): Promise<PostModule> {
 	};
 }
 
-export async function getAllPosts(options?: {
+export async function listBlogPosts(options?: {
 	includeDrafts?: boolean;
-}): Promise<PostSummary[]> {
+}): Promise<BlogPostSummary[]> {
 	const includeDrafts = options?.includeDrafts ?? false;
-	const slugs = getAllSlugs({ includeDrafts });
+	const slugs = listBlogSlugs({ includeDrafts });
 
 	const posts = await Promise.all(
 		slugs.map(async (slug) => {
-			const { frontmatter } = await getPostModule(slug);
+			const { frontmatter } = await loadBlogPost(slug);
 			return { slug, frontmatter };
 		}),
 	);

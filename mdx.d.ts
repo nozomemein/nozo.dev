@@ -1,8 +1,8 @@
 declare module "*.mdx" {
 	import type { MDXContent } from "mdx/types";
-	import type { BaseFrontmatter } from "./lib/blog/posts";
+	import type { BlogFrontmatterBase } from "./lib/content/blog/mdx";
 
 	const MDXComponent: MDXContent;
-	export const frontmatter: BaseFrontmatter;
+	export const frontmatter: BlogFrontmatterBase;
 	export default MDXComponent;
 }

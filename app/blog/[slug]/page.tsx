@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
+import { listBlogSlugs, loadBlogPost } from "@/lib/content/blog/mdx";
 import { blogPostingJsonLd } from "@/lib/metadata/blog-posting";
 import { jsonLdScript } from "@/lib/metadata/json-ld";
 import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
@@ -12,7 +12,7 @@ import { DemotedMdxH1 } from "@/mdx-components";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	return getAllSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
+	return listBlogSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -22,7 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const { slug } = await params;
 
-	const { frontmatter } = await getPostModule(slug);
+	const { frontmatter } = await loadBlogPost(slug);
 	if (frontmatter.status === "draft") {
 		notFound();
 	}
@@ -58,7 +58,7 @@ export default async function BlogPostPage({
 }) {
 	const { slug } = await params;
 
-	const { frontmatter, Component: Post } = await getPostModule(slug);
+	const { frontmatter, Component: Post } = await loadBlogPost(slug);
 	if (frontmatter.status === "draft") {
 		notFound();
 	}
