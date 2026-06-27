@@ -24,6 +24,7 @@ export default function Home() {
 				<Link
 					href="https://x.com/nozomemein"
 					target="_blank"
+					rel="noopener noreferrer"
 					className="text-primary underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
 				>
 					Twitter/X
@@ -31,6 +32,7 @@ export default function Home() {
 				<Link
 					href="https://github.com/nozomemein"
 					target="_blank"
+					rel="noopener noreferrer"
 					className="text-primary underline-offset-4 hover:underline text-sm font-medium inline-flex items-center"
 				>
 					GitHub
