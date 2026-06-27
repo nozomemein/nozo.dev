@@ -2,6 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { ComponentType } from "react";
+import {
+	type PostFrontmatterFields,
+	validatePostFrontmatterFields,
+} from "@/lib/blog/validate-frontmatter";
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -10,11 +14,7 @@ export type BaseFrontmatter = {
 	description: string;
 };
 
-export type PostFrontmatter = BaseFrontmatter & {
-	date: string;
-	tags?: string[];
-	status?: "draft" | "published";
-};
+export type PostFrontmatter = PostFrontmatterFields;
 
 export type PostSummary = { slug: string; frontmatter: PostFrontmatter };
 export type PostModule = {
@@ -28,12 +28,6 @@ type MdxModule = {
 	frontmatter?: unknown;
 };
 
-const REQUIRED_FIELDS: Array<keyof PostFrontmatter> = [
-	"title",
-	"description",
-	"date",
-];
-
 function getFrontmatterStatusFromFile(filePath: string) {
 	const raw = fs.readFileSync(filePath, "utf8");
 	const { data } = matter(raw);
@@ -42,49 +36,9 @@ function getFrontmatterStatusFromFile(filePath: string) {
 }
 
 function validatePostFrontmatter(data: unknown, slug: string): PostFrontmatter {
-	if (!data || typeof data !== "object") {
-		throw new Error(`Missing frontmatter export in ${slug}`);
-	}
-
-	const frontmatter = data as Record<string, unknown>;
-
-	for (const field of REQUIRED_FIELDS) {
-		const value = frontmatter[field];
-		if (typeof value !== "string" || value.trim().length === 0) {
-			throw new Error(`Missing required frontmatter "${field}" in ${slug}`);
-		}
-	}
-
-	const tags = frontmatter.tags;
-	if (
-		typeof tags !== "undefined" &&
-		(!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string"))
-	) {
-		throw new Error(`Invalid frontmatter "tags" in ${slug}`);
-	}
-
-	const status = frontmatter.status;
-
-	if (
-		typeof status !== "undefined" &&
-		status !== "draft" &&
-		status !== "published"
-	) {
-		throw new Error(`Invalid frontmatter "status" in ${slug}`);
-	}
-
-	const date = frontmatter.date as string;
-	if (Number.isNaN(Date.parse(date))) {
-		throw new Error(`Invalid frontmatter "date" in ${slug}`);
-	}
-
-	return {
-		title: frontmatter.title as string,
-		description: frontmatter.description as string,
-		date,
-		tags: tags as string[] | undefined,
-		status: status as "draft" | "published" | undefined,
-	};
+	return validatePostFrontmatterFields(data, slug, {
+		missingFrontmatterError: `Missing frontmatter export in ${slug}`,
+	});
 }
 
 export function getAllSlugs(_options?: { includeDrafts?: boolean }): string[] {

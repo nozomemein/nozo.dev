@@ -1,11 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts } from "@/lib/blog/posts";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { config } from "@/lib/seo/site";
+
+const title = "Blog";
+const description = config.site.blogDescription;
+const imagePath = config.ogImagePaths.blog;
 
 export const metadata: Metadata = {
-	title: "Blog",
+	title,
+	description,
 	alternates: { canonical: "/blog" },
+	openGraph: buildPageOpenGraph({
+		title,
+		description,
+		path: "/blog",
+		imagePath,
+	}),
+	twitter: buildPageTwitter(title, description, imagePath),
 };
 
 export default async function BlogIndexPage() {

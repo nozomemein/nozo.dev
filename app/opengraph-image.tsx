@@ -1,9 +1,9 @@
-import { config } from "@/lib/constants";
 import {
 	createOgImageResponse,
 	ogImageContentType,
 	ogImageSize,
 } from "@/lib/og/image-response";
+import { config } from "@/lib/seo/site";
 
 export const size = ogImageSize;
 export const contentType = ogImageContentType;

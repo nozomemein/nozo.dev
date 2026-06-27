@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { config } from "@/lib/constants";
-import { getBlogPostOgImagePath } from "@/lib/post-frontmatter";
-import { getAllSlugs, getPostModule } from "@/lib/posts";
+import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
+import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
+import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
+import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
+import { config } from "@/lib/seo/site";
 
 export const dynamicParams = false;
 
@@ -25,51 +28,25 @@ export async function generateMetadata({
 
 	const title = frontmatter.title;
 	const description = frontmatter.description;
+	const imagePath = getBlogPostOgImagePath(slug);
+	const path = `/blog/${slug}`;
 
 	return {
 		title,
 		description,
-		alternates: { canonical: `/blog/${slug}` },
-		openGraph: {
+		alternates: { canonical: path },
+		openGraph: buildPageOpenGraph({
 			title,
 			description,
+			path,
+			imagePath,
 			type: "article",
 			publishedTime: frontmatter.date,
-		},
-		twitter: {
-			card: "summary_large_image",
-			title,
-			description,
-		},
-	};
-}
-
-function buildBlogPostingJsonLd(
-	slug: string,
-	frontmatter: {
-		title: string;
-		description: string;
-		date: string;
-	},
-) {
-	const ogImagePath = getBlogPostOgImagePath(slug);
-
-	return {
-		"@context": "https://schema.org",
-		"@type": "BlogPosting",
-		headline: frontmatter.title,
-		description: frontmatter.description,
-		datePublished: frontmatter.date,
-		url: `${config.site.prodOrigin}/blog/${slug}`,
-		image: `${config.site.prodOrigin}${ogImagePath}`,
-		author: {
-			"@type": "Person",
-			name: config.site.authorName,
-		},
-		publisher: {
-			"@type": "Organization",
-			name: config.site.name,
-		},
+			modifiedTime: frontmatter.updatedAt,
+			authors: [config.site.authorName],
+			tags: frontmatter.tags,
+		}),
+		twitter: buildPageTwitter(title, description, imagePath),
 	};
 }
 
@@ -92,7 +69,7 @@ export default async function BlogPostPage({
 			<script
 				type="application/ld+json"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized from trusted build-time data
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
 			/>
 			<article className="space-y-6">
 				<header className="space-y-3">
