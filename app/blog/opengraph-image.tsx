@@ -1,15 +1,10 @@
-import {
-	createOgImageResponse,
-	ogImageContentType,
-	ogImageSize,
-} from "@/lib/og/image-response";
+import { contentType, createOgImage, size } from "@/lib/og-image/response";
 
-export const size = ogImageSize;
-export const contentType = ogImageContentType;
+export { contentType, size };
 export const dynamic = "force-static";
 
 export default async function OpenGraphImage() {
-	return createOgImageResponse({
+	return createOgImage({
 		title: "Blog",
 	});
 }

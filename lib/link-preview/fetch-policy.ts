@@ -1,7 +1,7 @@
-import type { LinkPreview } from "@/lib/link/previews";
+import type { LinkPreview } from "@/lib/link-preview/types";
 
-export const LINK_PREVIEW_SUCCESS_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-export const LINK_PREVIEW_FAILURE_TTL_MS = 60 * 60 * 1000;
+export const successTtlMs = 30 * 24 * 60 * 60 * 1000;
+export const failureTtlMs = 60 * 60 * 1000;
 
 function isWithinTtl(isoDate: string, ttlMs: number, now: number): boolean {
 	const parsed = Date.parse(isoDate);
@@ -12,7 +12,7 @@ function isWithinTtl(isoDate: string, ttlMs: number, now: number): boolean {
 	return now - parsed < ttlMs;
 }
 
-export function shouldSkipLinkPreviewFetch(
+export function shouldSkipFetch(
 	entry: LinkPreview | undefined,
 	now = Date.now(),
 ): boolean {
@@ -20,17 +20,14 @@ export function shouldSkipLinkPreviewFetch(
 		return false;
 	}
 
-	if (
-		entry.fetchedAt &&
-		isWithinTtl(entry.fetchedAt, LINK_PREVIEW_SUCCESS_TTL_MS, now)
-	) {
+	if (entry.fetchedAt && isWithinTtl(entry.fetchedAt, successTtlMs, now)) {
 		return true;
 	}
 
 	if (
 		!entry.fetchedAt &&
 		entry.failedAt &&
-		isWithinTtl(entry.failedAt, LINK_PREVIEW_FAILURE_TTL_MS, now)
+		isWithinTtl(entry.failedAt, failureTtlMs, now)
 	) {
 		return true;
 	}
@@ -38,7 +35,7 @@ export function shouldSkipLinkPreviewFetch(
 	return false;
 }
 
-export function resolvePreviewImageUrl(image: string, pageUrl: string): string {
+export function resolveImageUrl(image: string, pageUrl: string): string {
 	try {
 		return new URL(image, pageUrl).toString();
 	} catch {

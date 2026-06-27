@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { getBlogPostOgImagePath } from "@/lib/blog/frontmatter";
-import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
-import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
-import { config } from "@/lib/seo/site";
+import { listBlogSlugs, loadBlogPost } from "@/lib/content/blog/mdx";
+import { blogPostingJsonLd } from "@/lib/metadata/blog-posting";
+import { jsonLdScript } from "@/lib/metadata/json-ld";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import { config } from "@/lib/site/config";
+import { blogPostOgImagePath } from "@/lib/site/routes";
 import { DemotedMdxH1 } from "@/mdx-components";
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	return getAllSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
+	return listBlogSlugs({ includeDrafts: false }).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -22,21 +22,21 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const { slug } = await params;
 
-	const { frontmatter } = await getPostModule(slug);
+	const { frontmatter } = await loadBlogPost(slug);
 	if (frontmatter.status === "draft") {
 		notFound();
 	}
 
 	const title = frontmatter.title;
 	const description = frontmatter.description;
-	const imagePath = getBlogPostOgImagePath(slug);
+	const imagePath = blogPostOgImagePath(slug);
 	const path = `/blog/${slug}`;
 
 	return {
 		title,
 		description,
 		alternates: { canonical: path },
-		openGraph: buildPageOpenGraph({
+		openGraph: pageOpenGraph({
 			title,
 			description,
 			path,
@@ -47,7 +47,7 @@ export async function generateMetadata({
 			authors: [config.site.authorName],
 			tags: frontmatter.tags,
 		}),
-		twitter: buildPageTwitter(title, description, imagePath),
+		twitter: pageTwitter(title, description, imagePath),
 	};
 }
 
@@ -58,19 +58,19 @@ export default async function BlogPostPage({
 }) {
 	const { slug } = await params;
 
-	const { frontmatter, Component: Post } = await getPostModule(slug);
+	const { frontmatter, Component: Post } = await loadBlogPost(slug);
 	if (frontmatter.status === "draft") {
 		notFound();
 	}
 
-	const jsonLd = buildBlogPostingJsonLd(slug, frontmatter);
+	const jsonLd = blogPostingJsonLd(slug, frontmatter);
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
 			<script
 				type="application/ld+json"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized from trusted build-time data
-				dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+				dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
 			/>
 			<article className="space-y-6">
 				<header className="space-y-3">

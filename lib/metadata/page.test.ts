@@ -1,14 +1,15 @@
 import { describe, expect, test } from "bun:test";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { config } from "@/lib/seo/site";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import { config } from "@/lib/site/config";
+import { ogImagePaths } from "@/lib/site/routes";
 
-describe("buildPageOpenGraph", () => {
+describe("pageOpenGraph", () => {
 	test("builds website metadata with defaults", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: config.site.name,
 			description: config.site.homeDescription,
 			path: "/",
-			imagePath: config.ogImagePaths.home,
+			imagePath: ogImagePaths.home,
 		});
 
 		expect(openGraph).toEqual({
@@ -18,12 +19,12 @@ describe("buildPageOpenGraph", () => {
 			siteName: config.site.name,
 			locale: config.site.locale,
 			type: "website",
-			images: [{ url: config.ogImagePaths.home }],
+			images: [{ url: ogImagePaths.home }],
 		});
 	});
 
 	test("builds article metadata with optional fields", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: "Test article",
 			description: "Test description",
 			path: "/blog/test",
@@ -51,7 +52,7 @@ describe("buildPageOpenGraph", () => {
 	});
 
 	test("omits modifiedTime when not provided", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: "Test article",
 			description: "Test description",
 			path: "/blog/test",
@@ -65,19 +66,19 @@ describe("buildPageOpenGraph", () => {
 	});
 });
 
-describe("buildPageTwitter", () => {
+describe("pageTwitter", () => {
 	test("builds summary_large_image metadata", () => {
-		const twitter = buildPageTwitter(
+		const twitter = pageTwitter(
 			"Test title",
 			"Test description",
-			config.ogImagePaths.home,
+			ogImagePaths.home,
 		);
 
 		expect(twitter).toEqual({
 			card: "summary_large_image",
 			title: "Test title",
 			description: "Test description",
-			images: [config.ogImagePaths.home],
+			images: [ogImagePaths.home],
 		});
 	});
 });

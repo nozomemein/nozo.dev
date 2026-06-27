@@ -1,15 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { getLinkPreview, getLinkPreviewCache } from "@/lib/link/previews";
+import {
+	getCachedLinkPreview,
+	loadLinkPreviewCache,
+} from "@/lib/link-preview/cache";
 
 describe("link previews", () => {
 	test("loads the generated cache", () => {
-		const cache = getLinkPreviewCache();
+		const cache = loadLinkPreviewCache();
 
 		expect(typeof cache).toBe("object");
 	});
 
 	test("returns a preview for a cached URL", () => {
-		const preview = getLinkPreview(
+		const preview = getCachedLinkPreview(
 			"https://github.com/flutter/packages/pull/9868",
 		);
 
@@ -19,6 +22,8 @@ describe("link previews", () => {
 	});
 
 	test("returns undefined for unknown URLs", () => {
-		expect(getLinkPreview("https://example.com/not-cached")).toBeUndefined();
+		expect(
+			getCachedLinkPreview("https://example.com/not-cached"),
+		).toBeUndefined();
 	});
 });

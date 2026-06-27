@@ -18,8 +18,4 @@ export const config = {
 		homeDescription: HOME_DESCRIPTION,
 		blogDescription: BLOG_DESCRIPTION,
 	},
-	ogImagePaths: {
-		home: "/opengraph-image",
-		blog: "/blog/opengraph-image",
-	},
 } as const;

@@ -1,29 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { getAllPosts } from "@/lib/blog/posts";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { config } from "@/lib/seo/site";
+import { listBlogPosts } from "@/lib/content/blog/mdx";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import { config } from "@/lib/site/config";
+import { ogImagePaths } from "@/lib/site/routes";
 
 const title = "Blog";
 const description = config.site.blogDescription;
-const imagePath = config.ogImagePaths.blog;
+const imagePath = ogImagePaths.blog;
 
 export const metadata: Metadata = {
 	title,
 	description,
 	alternates: { canonical: "/blog" },
-	openGraph: buildPageOpenGraph({
+	openGraph: pageOpenGraph({
 		title,
 		description,
 		path: "/blog",
 		imagePath,
 	}),
-	twitter: buildPageTwitter(title, description, imagePath),
+	twitter: pageTwitter(title, description, imagePath),
 };
 
 export default async function BlogIndexPage() {
-	const posts = await getAllPosts();
+	const posts = await listBlogPosts();
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-6 sm:p-12">

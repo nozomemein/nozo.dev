@@ -1,20 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as cheerio from "cheerio";
-import { extractLinkCardHrefs } from "@/lib/link/card-urls";
+import { blogDir } from "@/lib/content/blog/paths";
+import { extractLinkCardHrefs } from "@/lib/link-card/extract-hrefs";
 import {
-	resolvePreviewImageUrl,
-	shouldSkipLinkPreviewFetch,
-} from "@/lib/link/preview-utils";
-import type { LinkPreview, LinkPreviewCache } from "@/lib/link/previews";
+	linkPreviewCachePath,
+	readLinkPreviewCacheFile,
+} from "@/lib/link-preview/cache";
+import {
+	resolveImageUrl,
+	shouldSkipFetch,
+} from "@/lib/link-preview/fetch-policy";
+import type { LinkPreview } from "@/lib/link-preview/types";
 
-const BLOG_DIR = path.join(process.cwd(), "content", "blog");
-const OUTPUT_PATH = path.join(
-	process.cwd(),
-	"content",
-	"generated",
-	"link-previews.json",
-);
 const FETCH_TIMEOUT_MS = 5000;
 const CONCURRENCY = 4;
 
@@ -36,13 +34,13 @@ function getFrontmatterStatusFromFile(filePath: string): string | undefined {
 }
 
 function extractLinkCardUrls(): string[] {
-	if (!fs.existsSync(BLOG_DIR)) {
+	if (!fs.existsSync(blogDir)) {
 		return [];
 	}
 
 	const urls = new Set<string>();
 
-	for (const entry of fs.readdirSync(BLOG_DIR, { withFileTypes: true })) {
+	for (const entry of fs.readdirSync(blogDir, { withFileTypes: true })) {
 		if (!entry.isFile() || !entry.name.endsWith(".mdx")) {
 			continue;
 		}
@@ -50,7 +48,7 @@ function extractLinkCardUrls(): string[] {
 			continue;
 		}
 
-		const filePath = path.join(BLOG_DIR, entry.name);
+		const filePath = path.join(blogDir, entry.name);
 		if (getFrontmatterStatusFromFile(filePath) === "draft") {
 			continue;
 		}
@@ -70,18 +68,6 @@ function isFetchableUrl(url: string): boolean {
 		return parsed.protocol === "http:" || parsed.protocol === "https:";
 	} catch {
 		return false;
-	}
-}
-
-function readExistingCache(): LinkPreviewCache {
-	if (!fs.existsSync(OUTPUT_PATH)) {
-		return {};
-	}
-
-	try {
-		return JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf8")) as LinkPreviewCache;
-	} catch {
-		return {};
 	}
 }
 
@@ -157,9 +143,7 @@ async function fetchPreview(url: string): Promise<Partial<LinkPreview>> {
 		{ selector: 'meta[property="og:site_name"]', attr: "content" },
 	]);
 
-	const image = rawImage
-		? resolvePreviewImageUrl(rawImage, response.url)
-		: undefined;
+	const image = rawImage ? resolveImageUrl(rawImage, response.url) : undefined;
 
 	return {
 		title,
@@ -201,10 +185,8 @@ async function mapWithConcurrency<T, R>(
 
 async function main() {
 	const urls = extractLinkCardUrls().filter(isFetchableUrl);
-	const cache = readExistingCache();
-	const urlsToFetch = urls.filter(
-		(url) => !shouldSkipLinkPreviewFetch(cache[url]),
-	);
+	const cache = readLinkPreviewCacheFile();
+	const urlsToFetch = urls.filter((url) => !shouldSkipFetch(cache[url]));
 
 	if (urlsToFetch.length === 0) {
 		console.log("No link previews to fetch.");
@@ -235,9 +217,12 @@ async function main() {
 		}
 	});
 
-	fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-	fs.writeFileSync(OUTPUT_PATH, `${JSON.stringify(cache, null, "\t")}\n`);
-	console.log(`Saved link previews to ${OUTPUT_PATH}`);
+	fs.mkdirSync(path.dirname(linkPreviewCachePath), { recursive: true });
+	fs.writeFileSync(
+		linkPreviewCachePath,
+		`${JSON.stringify(cache, null, "\t")}\n`,
+	);
+	console.log(`Saved link previews to ${linkPreviewCachePath}`);
 }
 
 main().catch((error) => {

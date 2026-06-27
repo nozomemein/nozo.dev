@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { config } from "@/lib/seo/site";
+import { config } from "@/lib/site/config";
 
 type OpenGraphPageOptions = {
 	title: string;
@@ -13,7 +13,7 @@ type OpenGraphPageOptions = {
 	tags?: string[];
 };
 
-export function buildPageOpenGraph(
+export function pageOpenGraph(
 	options: OpenGraphPageOptions,
 ): NonNullable<Metadata["openGraph"]> {
 	const {
@@ -43,7 +43,7 @@ export function buildPageOpenGraph(
 	};
 }
 
-export function buildPageTwitter(
+export function pageTwitter(
 	title: string,
 	description: string,
 	imagePath: string,

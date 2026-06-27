@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { validatePostFrontmatterFields } from "@/lib/blog/validate-frontmatter";
+import { parseBlogFrontmatter } from "@/lib/content/blog/schema";
 
-describe("validatePostFrontmatterFields", () => {
+describe("parseBlogFrontmatter", () => {
 	test("accepts a valid published post", () => {
-		const frontmatter = validatePostFrontmatterFields(
+		const frontmatter = parseBlogFrontmatter(
 			{
 				title: "Test post",
 				description: "Test description",
@@ -17,7 +17,7 @@ describe("validatePostFrontmatterFields", () => {
 	});
 
 	test("accepts optional updatedAt on or after date", () => {
-		const frontmatter = validatePostFrontmatterFields(
+		const frontmatter = parseBlogFrontmatter(
 			{
 				title: "Updated post",
 				description: "Test description",
@@ -32,7 +32,7 @@ describe("validatePostFrontmatterFields", () => {
 	});
 
 	test("accepts a draft without extra fields", () => {
-		const frontmatter = validatePostFrontmatterFields(
+		const frontmatter = parseBlogFrontmatter(
 			{
 				title: "Draft post",
 				description: "Draft description",
@@ -47,7 +47,7 @@ describe("validatePostFrontmatterFields", () => {
 
 	test("rejects invalid dates", () => {
 		expect(() =>
-			validatePostFrontmatterFields(
+			parseBlogFrontmatter(
 				{
 					title: "Bad date",
 					description: "Test description",
@@ -61,7 +61,7 @@ describe("validatePostFrontmatterFields", () => {
 
 	test("rejects non-ISO date formats", () => {
 		expect(() =>
-			validatePostFrontmatterFields(
+			parseBlogFrontmatter(
 				{
 					title: "Bad date",
 					description: "Test description",
@@ -75,7 +75,7 @@ describe("validatePostFrontmatterFields", () => {
 
 	test("rejects invalid updatedAt", () => {
 		expect(() =>
-			validatePostFrontmatterFields(
+			parseBlogFrontmatter(
 				{
 					title: "Bad updatedAt",
 					description: "Test description",
@@ -90,7 +90,7 @@ describe("validatePostFrontmatterFields", () => {
 
 	test("rejects updatedAt before date", () => {
 		expect(() =>
-			validatePostFrontmatterFields(
+			parseBlogFrontmatter(
 				{
 					title: "Bad updatedAt",
 					description: "Test description",

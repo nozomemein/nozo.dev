@@ -1,31 +1,31 @@
 import type { MetadataRoute } from "next";
 import {
-	getPostFreshnessDate,
-	type PostFrontmatterFields,
-} from "@/lib/blog/validate-frontmatter";
+	type BlogFrontmatter,
+	blogPostFreshnessDate,
+} from "@/lib/content/blog/schema";
 
-export type SitemapPost = {
+export type SitemapBlogPost = {
 	slug: string;
-	frontmatter: PostFrontmatterFields;
+	frontmatter: BlogFrontmatter;
 };
 
-export function buildSitemapEntries(
+export function sitemapEntries(
 	origin: string,
-	posts: SitemapPost[],
+	posts: SitemapBlogPost[],
 ): MetadataRoute.Sitemap {
 	const sortedPosts = [...posts].sort(
 		(a, b) =>
-			Date.parse(getPostFreshnessDate(b.frontmatter)) -
-			Date.parse(getPostFreshnessDate(a.frontmatter)),
+			Date.parse(blogPostFreshnessDate(b.frontmatter)) -
+			Date.parse(blogPostFreshnessDate(a.frontmatter)),
 	);
 
 	const postEntries: MetadataRoute.Sitemap = sortedPosts.map((post) => ({
 		url: `${origin}/blog/${post.slug}`,
-		lastModified: getPostFreshnessDate(post.frontmatter),
+		lastModified: blogPostFreshnessDate(post.frontmatter),
 	}));
 
 	const latestPostDate = sortedPosts[0]
-		? getPostFreshnessDate(sortedPosts[0].frontmatter)
+		? blogPostFreshnessDate(sortedPosts[0].frontmatter)
 		: undefined;
 
 	return [

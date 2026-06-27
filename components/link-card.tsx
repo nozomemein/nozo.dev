@@ -1,4 +1,4 @@
-import { getLinkPreview } from "@/lib/link/previews";
+import { getCachedLinkPreview } from "@/lib/link-preview/cache";
 import { cn } from "@/lib/utils";
 
 type LinkCardProps = {
@@ -15,7 +15,7 @@ function getHostname(href: string): string {
 }
 
 export function LinkCard({ href, className }: LinkCardProps) {
-	const preview = getLinkPreview(href);
+	const preview = getCachedLinkPreview(href);
 	const hostname = getHostname(href);
 	const hasRichPreview = Boolean(
 		preview?.title || preview?.description || preview?.image,

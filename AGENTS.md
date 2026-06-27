@@ -28,7 +28,7 @@ Personal portfolio and blog at [nozo.dev](https://nozo.dev).
 - Static export (`output: "export"`) deployed to **Cloudflare Pages** via `wrangler.jsonc` (build output in `out/`)
 
 ```
-content/blog/*.mdx → lib/blog/posts.ts → app/blog/[slug]/page.tsx → next build → out/ → Cloudflare Pages
+content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → next build → out/ → Cloudflare Pages
 ```
 
 ## Repository layout
@@ -39,19 +39,21 @@ content/blog/*.mdx → lib/blog/posts.ts → app/blog/[slug]/page.tsx → next b
 | `components/` | UI components (shadcn/ui + typography) |
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
-| `lib/blog/posts.ts` | Blog post loading via MDX import |
-| `lib/blog/frontmatter.ts` | Read blog frontmatter from MDX files without importing MDX |
-| `lib/blog/validate-frontmatter.ts` | Shared frontmatter validation |
-| `lib/seo/site.ts` | Site config constants |
-| `lib/seo/page-metadata.ts` | OGP and Twitter metadata helpers |
-| `lib/seo/blog-json-ld.ts` | BlogPosting JSON-LD builder |
-| `lib/seo/serialize-json-ld.ts` | Safe JSON-LD serialization |
-| `lib/seo/sitemap-entries.ts` | Sitemap entry builder |
-| `lib/link/card-urls.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
-| `lib/link/preview-utils.ts` | Link preview cache TTL and image URL helpers |
-| `lib/link/previews.ts` | LinkCard OGP preview cache loader |
-| `lib/og/colors.ts` | Dark theme colors for generated OG images |
-| `lib/og/image-response.tsx` | Shared `ImageResponse` builder for OG images |
+| `lib/site/config.ts` | Site config constants |
+| `lib/site/routes.ts` | OG image path helpers |
+| `lib/content/blog/schema.ts` | Shared frontmatter validation |
+| `lib/content/blog/files.ts` | Read blog frontmatter from MDX files without importing MDX |
+| `lib/content/blog/mdx.ts` | Blog post loading via MDX import |
+| `lib/metadata/page.ts` | OGP and Twitter metadata helpers |
+| `lib/metadata/blog-posting.ts` | BlogPosting JSON-LD builder |
+| `lib/metadata/json-ld.ts` | Safe JSON-LD serialization |
+| `lib/metadata/sitemap.ts` | Sitemap entry builder |
+| `lib/link-card/extract-hrefs.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
+| `lib/link-preview/types.ts` | Link preview cache types |
+| `lib/link-preview/cache.ts` | LinkCard OGP preview cache loader |
+| `lib/link-preview/fetch-policy.ts` | Link preview cache TTL and image URL helpers |
+| `lib/og-image/theme.ts` | Dark theme colors for generated OG images |
+| `lib/og-image/response.tsx` | Shared `ImageResponse` builder for OG images |
 | `app/opengraph-image.tsx` | Home page OG image |
 | `app/blog/opengraph-image.tsx` | Blog index OG image |
 | `app/blog/[slug]/opengraph-image.tsx` | Blog post OG images |
@@ -90,7 +92,7 @@ After any change that affects appearance (layout, styling, components, typograph
 2. Open the affected page(s) at `http://localhost:3000`
 3. Check both light and dark mode when the change may affect theme styling
 
-For **OG images**, preview the generated image directly after changing `lib/og/image-response.tsx`, `lib/og/colors.ts`, route-level `opengraph-image.tsx` files, or blog post titles:
+For **OG images**, preview the generated image directly after changing `lib/og-image/response.tsx`, `lib/og-image/theme.ts`, route-level `opengraph-image.tsx` files, or blog post titles:
 
 - Home: `http://localhost:3000/opengraph-image`
 - Blog index: `http://localhost:3000/blog/opengraph-image`
