@@ -4,14 +4,14 @@ import {
 	type PostFrontmatterFields,
 } from "@/lib/blog/validate-frontmatter";
 
-export type SitemapPost = {
+export type SitemapBlogPost = {
 	slug: string;
 	frontmatter: PostFrontmatterFields;
 };
 
-export function buildSitemapEntries(
+export function sitemapEntries(
 	origin: string,
-	posts: SitemapPost[],
+	posts: SitemapBlogPost[],
 ): MetadataRoute.Sitemap {
 	const sortedPosts = [...posts].sort(
 		(a, b) =>

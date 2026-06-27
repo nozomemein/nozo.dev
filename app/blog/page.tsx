@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getAllPosts } from "@/lib/blog/posts";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 	title,
 	description,
 	alternates: { canonical: "/blog" },
-	openGraph: buildPageOpenGraph({
+	openGraph: pageOpenGraph({
 		title,
 		description,
 		path: "/blog",
 		imagePath,
 	}),
-	twitter: buildPageTwitter(title, description, imagePath),
+	twitter: pageTwitter(title, description, imagePath),
 };
 
 export default async function BlogIndexPage() {

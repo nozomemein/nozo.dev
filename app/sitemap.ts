@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPostFrontmatterBySlug } from "@/lib/blog/frontmatter";
 import { getAllSlugs } from "@/lib/blog/posts";
-import { buildSitemapEntries } from "@/lib/seo/sitemap-entries";
+import { sitemapEntries } from "@/lib/metadata/sitemap";
 import { config } from "@/lib/site/config";
 
 export const dynamic = "force-static";
@@ -17,5 +17,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		return { slug, frontmatter };
 	});
 
-	return buildSitemapEntries(origin, posts);
+	return sitemapEntries(origin, posts);
 }

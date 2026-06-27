@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 	title,
 	description,
 	alternates: { canonical: "/" },
-	openGraph: buildPageOpenGraph({
+	openGraph: pageOpenGraph({
 		title,
 		description,
 		path: "/",
 		imagePath,
 	}),
-	twitter: buildPageTwitter(title, description, imagePath),
+	twitter: pageTwitter(title, description, imagePath),
 };
 
 export default function Home() {

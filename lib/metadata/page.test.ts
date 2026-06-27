@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
-describe("buildPageOpenGraph", () => {
+describe("pageOpenGraph", () => {
 	test("builds website metadata with defaults", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: config.site.name,
 			description: config.site.homeDescription,
 			path: "/",
@@ -24,7 +24,7 @@ describe("buildPageOpenGraph", () => {
 	});
 
 	test("builds article metadata with optional fields", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: "Test article",
 			description: "Test description",
 			path: "/blog/test",
@@ -52,7 +52,7 @@ describe("buildPageOpenGraph", () => {
 	});
 
 	test("omits modifiedTime when not provided", () => {
-		const openGraph = buildPageOpenGraph({
+		const openGraph = pageOpenGraph({
 			title: "Test article",
 			description: "Test description",
 			path: "/blog/test",
@@ -66,9 +66,9 @@ describe("buildPageOpenGraph", () => {
 	});
 });
 
-describe("buildPageTwitter", () => {
+describe("pageTwitter", () => {
 	test("builds summary_large_image metadata", () => {
-		const twitter = buildPageTwitter(
+		const twitter = pageTwitter(
 			"Test title",
 			"Test description",
 			ogImagePaths.home,

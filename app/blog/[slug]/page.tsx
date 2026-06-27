@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { getAllSlugs, getPostModule } from "@/lib/blog/posts";
-import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
-import { buildPageOpenGraph, buildPageTwitter } from "@/lib/seo/page-metadata";
-import { serializeJsonLd } from "@/lib/seo/serialize-json-ld";
+import { blogPostingJsonLd } from "@/lib/metadata/blog-posting";
+import { jsonLdScript } from "@/lib/metadata/json-ld";
+import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { blogPostOgImagePath } from "@/lib/site/routes";
 import { DemotedMdxH1 } from "@/mdx-components";
@@ -36,7 +36,7 @@ export async function generateMetadata({
 		title,
 		description,
 		alternates: { canonical: path },
-		openGraph: buildPageOpenGraph({
+		openGraph: pageOpenGraph({
 			title,
 			description,
 			path,
@@ -47,7 +47,7 @@ export async function generateMetadata({
 			authors: [config.site.authorName],
 			tags: frontmatter.tags,
 		}),
-		twitter: buildPageTwitter(title, description, imagePath),
+		twitter: pageTwitter(title, description, imagePath),
 	};
 }
 
@@ -63,14 +63,14 @@ export default async function BlogPostPage({
 		notFound();
 	}
 
-	const jsonLd = buildBlogPostingJsonLd(slug, frontmatter);
+	const jsonLd = blogPostingJsonLd(slug, frontmatter);
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
 			<script
 				type="application/ld+json"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized from trusted build-time data
-				dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+				dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
 			/>
 			<article className="space-y-6">
 				<header className="space-y-3">

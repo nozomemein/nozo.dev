@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { buildBlogPostingJsonLd } from "@/lib/seo/blog-json-ld";
+import { blogPostingJsonLd } from "@/lib/metadata/blog-posting";
 import { config } from "@/lib/site/config";
 
-describe("buildBlogPostingJsonLd", () => {
+describe("blogPostingJsonLd", () => {
 	const frontmatter = {
 		title: "Test article",
 		description: "Test description",
@@ -10,7 +10,7 @@ describe("buildBlogPostingJsonLd", () => {
 	};
 
 	test("builds BlogPosting JSON-LD without dateModified by default", () => {
-		const jsonLd = buildBlogPostingJsonLd("test", frontmatter);
+		const jsonLd = blogPostingJsonLd("test", frontmatter);
 
 		expect(jsonLd).toEqual({
 			"@context": "https://schema.org",
@@ -33,7 +33,7 @@ describe("buildBlogPostingJsonLd", () => {
 	});
 
 	test("includes dateModified when updatedAt is set", () => {
-		const jsonLd = buildBlogPostingJsonLd("test", {
+		const jsonLd = blogPostingJsonLd("test", {
 			...frontmatter,
 			updatedAt: "2026-02-01",
 		});

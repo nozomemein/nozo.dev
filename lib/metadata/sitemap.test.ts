@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { buildSitemapEntries } from "@/lib/seo/sitemap-entries";
+import { sitemapEntries } from "@/lib/metadata/sitemap";
 
 const origin = "https://nozo.dev";
 
-describe("buildSitemapEntries", () => {
+describe("sitemapEntries", () => {
 	test("includes static routes and post URLs", () => {
-		const entries = buildSitemapEntries(origin, [
+		const entries = sitemapEntries(origin, [
 			{
 				slug: "hello",
 				frontmatter: {
@@ -35,7 +35,7 @@ describe("buildSitemapEntries", () => {
 	});
 
 	test("uses date as lastModified when updatedAt is absent", () => {
-		const entries = buildSitemapEntries(origin, [
+		const entries = sitemapEntries(origin, [
 			{
 				slug: "hello",
 				frontmatter: {
@@ -52,7 +52,7 @@ describe("buildSitemapEntries", () => {
 	});
 
 	test("prefers updatedAt for post lastModified when set", () => {
-		const entries = buildSitemapEntries(origin, [
+		const entries = sitemapEntries(origin, [
 			{
 				slug: "updated-post",
 				frontmatter: {
@@ -72,7 +72,7 @@ describe("buildSitemapEntries", () => {
 	});
 
 	test("sets blog index lastModified from the freshest post", () => {
-		const entries = buildSitemapEntries(origin, [
+		const entries = sitemapEntries(origin, [
 			{
 				slug: "older",
 				frontmatter: {
@@ -98,7 +98,7 @@ describe("buildSitemapEntries", () => {
 	});
 
 	test("uses updatedAt when choosing the freshest post for blog index", () => {
-		const entries = buildSitemapEntries(origin, [
+		const entries = sitemapEntries(origin, [
 			{
 				slug: "older-date",
 				frontmatter: {

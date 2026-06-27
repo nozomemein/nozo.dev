@@ -1,17 +1,14 @@
 import { config } from "@/lib/site/config";
 import { blogPostOgImagePath } from "@/lib/site/routes";
 
-export type BlogPostingFrontmatter = {
+export type BlogPostingInput = {
 	title: string;
 	description: string;
 	date: string;
 	updatedAt?: string;
 };
 
-export function buildBlogPostingJsonLd(
-	slug: string,
-	frontmatter: BlogPostingFrontmatter,
-) {
+export function blogPostingJsonLd(slug: string, frontmatter: BlogPostingInput) {
 	const ogImagePath = blogPostOgImagePath(slug);
 
 	return {
