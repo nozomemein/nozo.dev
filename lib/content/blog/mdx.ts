@@ -48,14 +48,10 @@ function getFrontmatterStatusFromFile(filePath: string) {
 
 export { parseBlogFrontmatter };
 
-export function listBlogSlugs(_options?: {
-	includeDrafts?: boolean;
-}): string[] {
+function getCandidateSlugs(): string[] {
 	if (!fs.existsSync(blogDir)) {
 		return [];
 	}
-
-	const includeDrafts = _options?.includeDrafts ?? false;
 
 	return fs
 		.readdirSync(blogDir, { withFileTypes: true })
@@ -63,14 +59,25 @@ export function listBlogSlugs(_options?: {
 		.map((entry) => entry.name)
 		.filter((name) => name.endsWith(".mdx"))
 		.filter((name) => !name.startsWith("_"))
-		.filter((name) => {
-			if (includeDrafts) {
-				return true;
-			}
-			const status = getFrontmatterStatusFromFile(path.join(blogDir, name));
-			return status !== "draft";
-		})
 		.map((name) => name.replace(/\.mdx$/, ""));
+}
+
+export function listBlogSlugs(_options?: {
+	includeDrafts?: boolean;
+}): string[] {
+	const includeDrafts = _options?.includeDrafts ?? false;
+	const slugs = getCandidateSlugs();
+
+	if (includeDrafts) {
+		return slugs;
+	}
+
+	return slugs.filter((slug) => {
+		const status = getFrontmatterStatusFromFile(
+			path.join(blogDir, `${slug}.mdx`),
+		);
+		return status !== "draft";
+	});
 }
 
 export async function loadBlogPost(slug: string): Promise<BlogPost> {
@@ -101,7 +108,7 @@ export async function listBlogPosts(options?: {
 	includeDrafts?: boolean;
 }): Promise<BlogPostSummary[]> {
 	const includeDrafts = options?.includeDrafts ?? false;
-	const slugs = listBlogSlugs({ includeDrafts });
+	const slugs = getCandidateSlugs();
 
 	const posts = await Promise.all(
 		slugs.map(async (slug) => {
@@ -110,7 +117,11 @@ export async function listBlogPosts(options?: {
 		}),
 	);
 
-	return posts.sort(
+	const filteredPosts = includeDrafts
+		? posts
+		: posts.filter((post) => post.frontmatter.status !== "draft");
+
+	return filteredPosts.sort(
 		(a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date),
 	);
 }
