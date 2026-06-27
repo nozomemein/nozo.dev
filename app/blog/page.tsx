@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { listBlogPosts } from "@/lib/content/blog/mdx";
-import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import {
+	pageAlternates,
+	pageOpenGraph,
+	pageTwitter,
+} from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
@@ -13,7 +17,7 @@ const imagePath = ogImagePaths.blog;
 export const metadata: Metadata = {
 	title,
 	description,
-	alternates: { canonical: "/blog" },
+	alternates: pageAlternates("/blog"),
 	openGraph: pageOpenGraph({
 		title,
 		description,

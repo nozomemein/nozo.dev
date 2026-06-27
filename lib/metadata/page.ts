@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import { config } from "@/lib/site/config";
 
+export const rssFeedPath = "/feed.xml";
+
+export function pageAlternates(
+	canonical: string,
+): NonNullable<Metadata["alternates"]> {
+	return {
+		canonical,
+		types: {
+			"application/rss+xml": rssFeedPath,
+		},
+	};
+}
+
 type OpenGraphPageOptions = {
 	title: string;
 	description: string;

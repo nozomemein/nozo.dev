@@ -1,7 +1,22 @@
 import { describe, expect, test } from "bun:test";
-import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import {
+	pageAlternates,
+	pageOpenGraph,
+	pageTwitter,
+} from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
+
+describe("pageAlternates", () => {
+	test("includes canonical URL and RSS feed type", () => {
+		expect(pageAlternates("/blog")).toEqual({
+			canonical: "/blog",
+			types: {
+				"application/rss+xml": "/feed.xml",
+			},
+		});
+	});
+});
 
 describe("pageOpenGraph", () => {
 	test("builds website metadata with defaults", () => {

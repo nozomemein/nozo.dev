@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TypographyH1, TypographyP } from "@/components/typography";
 import { jsonLdScript, webSiteJsonLd } from "@/lib/metadata/json-ld";
-import { pageOpenGraph, pageTwitter } from "@/lib/metadata/page";
+import {
+	pageAlternates,
+	pageOpenGraph,
+	pageTwitter,
+} from "@/lib/metadata/page";
 import { config } from "@/lib/site/config";
 import { ogImagePaths } from "@/lib/site/routes";
 
@@ -13,7 +17,7 @@ const imagePath = ogImagePaths.home;
 export const metadata: Metadata = {
 	title,
 	description,
-	alternates: { canonical: "/" },
+	alternates: pageAlternates("/"),
 	openGraph: pageOpenGraph({
 		title,
 		description,
