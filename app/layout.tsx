@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { ModeToggleLazy } from "@/components/mode-toggle-lazy";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/site/config";
 import "./globals.css";
@@ -50,7 +50,7 @@ export default function RootLayout({
 										</Button>
 									</nav>
 									<div className="h-5 w-px bg-border" aria-hidden="true" />
-									<ModeToggleLazy />
+									<ModeToggle />
 								</div>
 							</div>
 						</header>
