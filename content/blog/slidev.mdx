@@ -1,0 +1,73 @@
+---
+title: "スライド作成にSlidevがとても良い"
+description: "とても便利なので普及したい"
+date: "2026-06-30"
+tags: ["Slidev", "発表"]
+status: "published"
+---
+
+社内・社外を通じて、ここ1-2年ほど人前で話す機会がちらほらあり、スライド作成に[Slidev](https://sli.dev/)を利用しているがとても良い。
+いくつか便利な機能と推しポイントがあるのでそれについて書き残す。
+
+<LinkCard href="https://sli.dev/"/>
+
+## markdownで管理できる
+兎にも角にもこれが一番なのだが、スライドのスタイリングと資料の内容は制作の段階で分離したく、かつGUIでぽちぽち位置調整などをかけるのが個人的には辛いので、markdownで管理することによって発表構成や内容に集中できる点が大変ありがたい。
+
+markdownが故にgit管理も比較的容易なので、自分は↓のようにまとめて管理している。
+
+<LinkCard href="https://github.com/nozomemein/slides"/>
+
+## Themeが比較的綺麗/整っているので、スタイリングに困らない
+さて肝心のスタイリングはというと、
+- Tailwind CSS互換のUnoCSS[^1]を使っており、HTMLも構文としてサポートしているので、Webでできることはなんでもできる
+- [Community BaseのTheme](https://sli.dev/resources/theme-gallery)もいくつかあり、基本的なユースケースには困らない
+
+それなりのスタイリングが簡単に当てられるので、自分みたいにスタイリングに細かいこだわりがない人間には合っていると思う。微調整したい場合もCSSを当てるだけなので、簡単。
+
+<LinkCard href="https://unocss.dev/"/>
+
+## 簡単にアニメーションがつけられる
+標準のアニメーション機構が手厚めに整備されており、例えばコードブロックで順に行をハイライトしたい場合などに他のツールでやろうとすると面倒なことが簡単にできる。
+普段PowerPointやGoogle スライドでアニメーションを多用する人間ではないのだが、便利なのでつい使ってしまう。
+
+- [Dynamic Line Highlighting](https://sli.dev/features/line-highlighting#dynamic-line-highlighting)
+- [Animation Guide](https://sli.dev/guide/animations)
+
+## 多少面倒なことはVue.jsでできたりする
+組み込みでVue.jsがサポートされているので、自前でVue Componentを作って装飾に利用できる。
+下記はSlidevの[Global Layer](https://sli.dev/features/global-layers)の機能と組み合わせて、スライド番号をつけるComponentの例。[^2]
+
+```js
+// SlideNumber.vue
+<template>
+  <div class="slide-number">
+    <SlideCurrentNo />
+  </div>
+</template>
+
+<style>
+.slide-number {
+  position: absolute;
+  bottom: 1rem;
+  right: 2rem;
+  font-size: 0.75rem;
+  color: #999;
+  opacity: 0.7;
+}
+</style>
+
+// global-bottom.vue
+<template>
+  <SlideNumber />
+</template>
+```
+
+## まとめ
+
+スライド作成は万人の悩みだと思っているので、ぜひ試してみて欲しい。
+
+---
+
+[^1]: UnoCSSのAuthorも同じくSlidev作者の[Anthony Fuさん](https://github.com/antfu)で様様である
+[^2]: [こちら](https://github.com/slidevjs/slidev/issues/64#issuecomment-838084965)を参考にした
