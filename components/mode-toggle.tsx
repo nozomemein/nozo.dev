@@ -19,12 +19,17 @@ export function ModeToggle() {
 	const menuId = useId();
 	const containerRef = useRef<HTMLDivElement>(null);
 
+	function selectTheme(value: (typeof themeOptions)[number]["value"]) {
+		setTheme(value);
+		setOpen(false);
+	}
+
 	useEffect(() => {
 		if (!open) {
 			return;
 		}
 
-		function handlePointerDown(event: MouseEvent) {
+		function handleClickOutside(event: MouseEvent) {
 			if (
 				containerRef.current &&
 				!containerRef.current.contains(event.target as Node)
@@ -39,11 +44,11 @@ export function ModeToggle() {
 			}
 		}
 
-		document.addEventListener("mousedown", handlePointerDown);
+		document.addEventListener("click", handleClickOutside);
 		document.addEventListener("keydown", handleKeyDown);
 
 		return () => {
-			document.removeEventListener("mousedown", handlePointerDown);
+			document.removeEventListener("click", handleClickOutside);
 			document.removeEventListener("keydown", handleKeyDown);
 		};
 	}, [open]);
@@ -77,9 +82,9 @@ export function ModeToggle() {
 							className={cn(
 								"flex w-full cursor-pointer rounded-sm px-2 py-1.5 text-left text-sm outline-hidden hover:bg-accent hover:text-accent-foreground",
 							)}
-							onClick={() => {
-								setTheme(option.value);
-								setOpen(false);
+							onClick={(event) => {
+								event.stopPropagation();
+								selectTheme(option.value);
 							}}
 						>
 							{option.label}
