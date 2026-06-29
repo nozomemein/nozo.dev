@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { MDXContent } from "mdx/types";
+import { loadBlogFrontmatter } from "@/lib/content/blog/files";
 import { blogDir } from "@/lib/content/blog/paths";
 import {
 	type BlogFrontmatter,
@@ -104,24 +105,28 @@ export async function loadBlogPost(slug: string): Promise<BlogPost> {
 	};
 }
 
+export function listBlogPostSummaries(options?: {
+	includeDrafts?: boolean;
+}): BlogPostSummary[] {
+	const slugs = listBlogSlugs(options);
+
+	return slugs
+		.map((slug) => {
+			const frontmatter = loadBlogFrontmatter(slug);
+			if (!frontmatter) {
+				return null;
+			}
+
+			return { slug, frontmatter };
+		})
+		.filter((post): post is BlogPostSummary => post !== null)
+		.sort(
+			(a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date),
+		);
+}
+
 export async function listBlogPosts(options?: {
 	includeDrafts?: boolean;
 }): Promise<BlogPostSummary[]> {
-	const includeDrafts = options?.includeDrafts ?? false;
-	const slugs = getCandidateSlugs();
-
-	const posts = await Promise.all(
-		slugs.map(async (slug) => {
-			const { frontmatter } = await loadBlogPost(slug);
-			return { slug, frontmatter };
-		}),
-	);
-
-	const filteredPosts = includeDrafts
-		? posts
-		: posts.filter((post) => post.frontmatter.status !== "draft");
-
-	return filteredPosts.sort(
-		(a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date),
-	);
+	return listBlogPostSummaries(options);
 }
