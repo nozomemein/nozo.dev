@@ -18,5 +18,11 @@
 		"image": "https://opengraph.githubassets.com/6f11ce6362dbbf7c4a245be763b736af68986e574ee055ff12cd4632274a57c3/nozomemein/slides",
 		"siteName": "GitHub",
 		"fetchedAt": "2026-06-29T21:03:27.870Z"
+	},
+	"https://unocss.dev/": {
+		"title": "UnoCSS",
+		"description": "The instant on-demand Atomic CSS engine",
+		"image": "https://unocss.dev/og.png#1",
+		"fetchedAt": "2026-06-29T21:22:55.222Z"
 	}
 }
