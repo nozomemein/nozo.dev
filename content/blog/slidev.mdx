@@ -2,7 +2,7 @@
 title: "スライド作成にSlidevがとても良い"
 description: "とても便利なので普及したい"
 date: "2026-06-30"
-tags: ["nextjs", "mdx"]
+tags: ["Slidev", "発表"]
 status: "published"
 ---
 
@@ -32,5 +32,33 @@ markdownが故にgit管理も比較的容易なので、自分は↓のように
 普段PowerPointやGoogle スライドでアニメーションを多用する人間ではないのだが、便利なのでつい使ってしまう。
 
 
-## 多少面倒なことはVueでできたりする
-- ref: SlidePageの実装
+## 多少面倒なことはVue.jsでできたりする
+組み込みでVue.jsがサポートされているので、自前でVue Componentを作って装飾に利用できる。
+下記は[Global Layer](https://sli.dev/features/global-layers)の機能と組み合わせて、スライド番号をつけるComponentの例。
+
+```js
+// SlideNumber.vue
+<template>
+  <div class="slide-number">
+    <SlideCurrentNo />
+  </div>
+</template>
+
+<style>
+.slide-number {
+  position: absolute;
+  bottom: 1rem;
+  right: 2rem;
+  font-size: 0.75rem;
+  color: #999;
+  opacity: 0.7;
+}
+</style>
+
+// global-bottom.vue
+<template>
+  <SlideNumber />
+</template>
+```
+
+## まとめ
