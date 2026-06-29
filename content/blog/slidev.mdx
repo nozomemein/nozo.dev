@@ -1,0 +1,33 @@
+---
+title: "スライド作成にSlidevがとても良い"
+description: "とても便利なので普及したい"
+date: "2026-06-30"
+tags: ["nextjs", "mdx"]
+status: "published"
+---
+
+社内・社外を通じて、ここ1-2年ほど人前で話す機会がちらほらあり、スライド作成に[Slidev](https://sli.dev/)を利用しているがとても良い。
+いくつか便利な機能と推しポイントがあるのでそれについて触れる。
+
+<LinkCard href="https://sli.dev/"/>
+
+## markdownで管理できる
+兎にも角にもこれが一番なのだが、スライドのスタイリングと資料の内容は制作の段階で分離したく、かつGUIでぽちぽち位置調整などをかけるのが個人的には辛いので、markdownで管理することによって発表構成や内容に集中できる点が大変ありがたい。
+
+markdownが故にgit管理も比較的容易なので、自分は↓のようにまとめて管理している。
+
+<LinkCard href="https://github.com/nozomemein/slides"/>
+
+## Themeが比較的綺麗なので、スタイリングに困らない
+さて肝心のスタイリングはというと、
+- Tailwind CSS互換のUnoCSSを使っているので、Webでできることはなんでもできる
+- community baseのthemeもいくつかあり、基本的なユースケースには困らない
+
+## 簡単にアニメーションがつけられる
+後述するスタイリング周りの機能がリッチなこともあり、
+- click marker
+- code blockで行のハイライトが簡単
+
+
+## 多少面倒なことはVueでできたりする
+- ref: SlidePageの実装
