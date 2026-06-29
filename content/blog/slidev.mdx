@@ -21,7 +21,7 @@ markdownが故にgit管理も比較的容易なので、自分は↓のように
 ## Themeが比較的綺麗/整っているので、スタイリングに困らない
 さて肝心のスタイリングはというと、
 - Tailwind CSS互換のUnoCSS[^1]を使っており、HTMLも構文としてサポートしているので、Webでできることはなんでもできる
-- Community baseのthemeもいくつかあり、基本的なユースケースには困らない
+- [Community BaseのTheme](https://sli.dev/resources/theme-gallery)もいくつかあり、基本的なユースケースには困らない
 
 それなりのスタイリングが簡単に当てられるので、自分みたいにスタイリングに細かいこだわりがない人間には合っていると思う。微調整したい場合もCSSを当てるだけなので、簡単。
 
@@ -36,7 +36,7 @@ markdownが故にgit管理も比較的容易なので、自分は↓のように
 
 ## 多少面倒なことはVue.jsでできたりする
 組み込みでVue.jsがサポートされているので、自前でVue Componentを作って装飾に利用できる。
-下記は[Global Layer](https://sli.dev/features/global-layers)の機能と組み合わせて、スライド番号をつけるComponentの例。
+下記はSlidevの[Global Layer](https://sli.dev/features/global-layers)の機能と組み合わせて、スライド番号をつけるComponentの例。[^2]
 
 ```js
 // SlideNumber.vue
@@ -70,3 +70,4 @@ markdownが故にgit管理も比較的容易なので、自分は↓のように
 ---
 
 [^1]: UnoCSSのAuthorも同じくSlidev作者の[Anthony Fuさん](https://github.com/antfu)で様様である
+[^2]: [こちら](https://github.com/slidevjs/slidev/issues/64#issuecomment-838084965)を参考にした
