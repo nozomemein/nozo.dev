@@ -47,6 +47,24 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 				{...props}
 			/>
 		),
+		ul: ({ className, ...props }) => (
+			<ul
+				className={cn("my-4 list-disc space-y-1 pl-6", className)}
+				{...props}
+			/>
+		),
+		ol: ({ className, ...props }) => (
+			<ol
+				className={cn("my-4 list-decimal space-y-1 pl-6", className)}
+				{...props}
+			/>
+		),
+		li: ({ className, ...props }) => (
+			<li
+				className={cn("marker:text-muted-foreground", className)}
+				{...props}
+			/>
+		),
 		pre: MdxPre,
 		code: ({ className, ...props }) => {
 			const isBlock =
