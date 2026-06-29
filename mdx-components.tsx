@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import type { ComponentPropsWithoutRef } from "react";
 import { LinkCard } from "@/components/link-card";
+import { MdxPre } from "@/components/mdx-pre";
 import { cn } from "@/lib/utils";
 
 export function DemotedMdxH1(props: ComponentPropsWithoutRef<"h1">) {
@@ -46,24 +47,25 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 				{...props}
 			/>
 		),
-		pre: ({ className, ...props }) => (
-			<pre
-				className={cn(
-					"my-6 overflow-x-auto rounded-md bg-neutral-900 p-4 text-neutral-100",
-					className,
-				)}
-				{...props}
-			/>
-		),
-		code: ({ className, ...props }) => (
-			<code
-				className={cn(
-					"rounded bg-neutral-100 px-1.5 py-0.5 text-sm text-neutral-800",
-					className,
-				)}
-				{...props}
-			/>
-		),
+		pre: MdxPre,
+		code: ({ className, ...props }) => {
+			const isBlock =
+				className?.includes("language-") || "data-language" in props;
+
+			if (isBlock) {
+				return <code className={className} {...props} />;
+			}
+
+			return (
+				<code
+					className={cn(
+						"rounded bg-muted px-1.5 py-0.5 text-sm font-mono text-foreground",
+						className,
+					)}
+					{...props}
+				/>
+			);
+		},
 		...components,
 	};
 }

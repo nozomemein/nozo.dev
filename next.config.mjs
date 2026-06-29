@@ -19,7 +19,18 @@ const withMDX = createMDX({
 			"remark-frontmatter",
 			["remark-mdx-frontmatter", { name: "frontmatter" }],
 		],
-		rehypePlugins: [],
+		rehypePlugins: [
+			[
+				"rehype-pretty-code",
+				{
+					theme: {
+						light: "github-light",
+						dark: "github-dark",
+					},
+					keepBackground: false,
+				},
+			],
+		],
 	},
 });
 
