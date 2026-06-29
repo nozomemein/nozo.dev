@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { listBlogPosts } from "@/lib/content/blog/mdx";
+import { listBlogPostSummaries } from "@/lib/content/blog/mdx";
 import {
 	pageAlternates,
 	pageOpenGraph,
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
 	twitter: pageTwitter(title, description, imagePath),
 };
 
-export default async function BlogIndexPage() {
-	const posts = await listBlogPosts();
+export default function BlogIndexPage() {
+	const posts = listBlogPostSummaries();
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-6 sm:p-12">
