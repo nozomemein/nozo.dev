@@ -245,3 +245,4 @@ MDX 変換と React adapter の処理順、frontmatter export、コンポーネ�
 - 自動検証は Biome、TypeScript、73 unit tests、production build、zizmor を対象にする。本番デプロイとマージは実施しない。
 
 - Void の head マージが同じ property のタグを 1 件に減らす不具合には、Bun のバージョン固定 patch を適用した。同一ページの複数タグを保持し、SSR の全タグを SPA 遷移時の管理対象にする。vendor の実際の head 解決・生成に対する回帰テストと、成果物の全タグ検証を追加した。
+- Draft PR #77 の GitHub Actions は成功した。Cloudflare Workers Builds は、dashboard に残る `pnpm run build` が `packageManager: bun@1.3.14` と不一致のため build script 実行前に失敗した。Node / Bun の検出と依存 install は成功している。dashboard の build command を `bun run build` へ変更し、移行版の upload command では `.void-wrangler.jsonc` を明示する必要がある。README に本番 / preview のコマンドを記載した。Cloudflare のローカル認証は期限切れのため、アカウント設定の変更・再実行は未実施である。

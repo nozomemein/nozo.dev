@@ -39,4 +39,14 @@ bun run build
 bunx wrangler deploy --config .void-wrangler.jsonc --env production
 ```
 
-Development, validation, and pull requests do not deploy the site. Confirm the intended Cloudflare account and existing service before a production upload. Void Platform, databases, and authentication are not used.
+Development and validation scripts do not run a production upload. The connected Cloudflare Workers Builds integration runs separately when a branch is pushed. In the Worker's **Settings > Build**, use these commands for the migrated branch:
+
+| Setting | Command |
+| --- | --- |
+| Build command | `bun run build` |
+| Deploy command (production branch) | `bunx wrangler deploy --config .void-wrangler.jsonc --env production` |
+| Preview / non-production branch command | `bunx wrangler versions upload --config .void-wrangler.jsonc --env production` |
+
+The preview command uploads a version of the existing service without promoting it to production. Set the build command before retrying PR builds; coordinate the generated-config upload commands with this migration because the current `main` branch still uses `wrangler.jsonc`. Workers Builds commands are dashboard settings, not repository configuration. See [Workers Builds configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
+
+Confirm the intended Cloudflare account and existing service before a production upload. Void Platform, databases, and authentication are not used.
