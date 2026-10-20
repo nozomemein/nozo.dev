@@ -1,5 +1,7 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import assert from "node:assert/strict";
+import { cp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import * as cheerio from "cheerio";
 import matter from "gray-matter";
 import {
 	type BlogPostSummary,
@@ -85,6 +87,62 @@ export async function generateStaticAssets(outputDir = "dist/client") {
 	}
 }
 
+export async function readStaticPage(directory: string, route: string) {
+	const key = route === "/" ? "index" : route.slice(1);
+	const html = await readFile(path.join(directory, `${key}.html`), "utf8");
+	const data = JSON.parse(
+		await readFile(path.join(directory, `_void/pages/${key}.json`), "utf8"),
+	);
+	assert.equal(data.url, route, `Wrong navigation URL for ${route}`);
+	assert.equal(data.errors, null, `Prerender failed for ${route}`);
+	const $ = cheerio.load(html);
+	assert.deepEqual(
+		JSON.parse($("#__VOID_PAGE_DATA__").text()),
+		data,
+		`HTML/navigation payload mismatch for ${route}`,
+	);
+	assert($("main").text().trim(), `Missing prerendered body for ${route}`);
+}
+
+export async function verifyPrerenderedPages(
+	directory: string,
+	slugs: string[],
+) {
+	const routes = [
+		"/",
+		"/blog",
+		"/privacy",
+		"/404",
+		...slugs.map((slug) => `/blog/${slug}`),
+	];
+	const keys = routes.map((route) =>
+		route === "/" ? "index" : route.slice(1),
+	);
+	const files = await readdir(directory, { recursive: true });
+	assert.deepEqual(
+		files.filter((file) => file.endsWith(".html")).sort(),
+		keys.map((key) => `${key}.html`).sort(),
+		"Unexpected or missing static HTML routes",
+	);
+	assert.deepEqual(
+		files
+			.filter(
+				(file) => file.startsWith("_void/pages/") && file.endsWith(".json"),
+			)
+			.sort(),
+		keys.map((key) => `_void/pages/${key}.json`).sort(),
+		"Unexpected or missing navigation routes",
+	);
+	for (const route of routes) await readStaticPage(directory, route);
+}
+
 if (import.meta.main) {
-	await generateStaticAssets();
+	const directory = "dist/client";
+	await verifyPrerenderedPages(
+		directory,
+		listBlogPostSummaries().map((post) => post.slug),
+	);
+	await generateStaticAssets(directory);
+	await rm("out", { recursive: true, force: true });
+	await cp(directory, "out", { recursive: true });
 }

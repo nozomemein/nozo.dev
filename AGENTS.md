@@ -48,7 +48,6 @@ content/blog/*.mdx → virtual:blog-posts → pages/blog/[slug].tsx → Vite+ / 
 | `lib/content/blog/files.ts` | Read blog frontmatter from MDX files without importing MDX |
 | `lib/content/blog/mdx.ts` | Build-time blog discovery and published summaries |
 | `lib/content/blog/manifest.ts`, `plugin.ts` | Published-only MDX registry and development refresh |
-| `scripts/prepare-content.ts` | Generate the registry under `.void/` |
 | `lib/metadata/page.ts`, `head.ts` | Framework-neutral OGP helpers and Void head descriptors |
 | `lib/metadata/blog-posting.ts` | BlogPosting JSON-LD builder |
 | `lib/metadata/json-ld.ts` | Safe JSON-LD serialization |
@@ -64,8 +63,7 @@ content/blog/*.mdx → virtual:blog-posts → pages/blog/[slug].tsx → Vite+ / 
 | `assets/fonts/` | Fonts used by generated OG images |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
-| `scripts/generate-static-assets.ts` | Build-time OG images, RSS, sitemap, and Cloudflare asset rules |
-| `scripts/finalize-static-build.ts` | Verify prerendered output before publishing it to `out/` |
+| `scripts/build-static.ts` | Check prerendered routes, generate OG / RSS / sitemap / Cloudflare rules, and copy output to `out/` |
 | `.github/workflows/ci.yml` | CI (Biome check + typecheck + test + build + zizmor) |
 
 ## Dev environment
@@ -99,7 +97,7 @@ After any change that affects appearance (layout, styling, components, typograph
 2. Open the affected page(s) at `http://localhost:3000`
 3. Check both light and dark mode when the change may affect theme styling
 
-For **OG images**, preview the generated image directly after changing `lib/og-image/response.tsx`, `lib/og-image/theme.ts`, `scripts/generate-static-assets.ts`, or blog post titles. Run `bun run build` and then `bun run start` (stop the dev server first) to preview the generated files:
+For **OG images**, preview the generated image directly after changing `lib/og-image/response.tsx`, `lib/og-image/theme.ts`, `scripts/build-static.ts`, or blog post titles. Run `bun run build` and then `bun run start` (stop the dev server first) to preview the generated files:
 
 - Home: `http://localhost:3000/opengraph-image`
 - Blog index: `http://localhost:3000/blog/opengraph-image`
@@ -126,7 +124,7 @@ Required frontmatter fields: `title`, `description`, `date` (ISO date string).
 
 Optional: `tags`, `status` (`draft` | `published`).
 
-Article OG images are generated at build time by `scripts/generate-static-assets.ts` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
+Article OG images are generated at build time by `scripts/build-static.ts` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
 
 - Draft posts are excluded from production builds unless `includeDrafts: true`
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored

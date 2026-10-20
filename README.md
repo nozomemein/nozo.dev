@@ -28,7 +28,7 @@ bun run start
 
 Stop the development server before starting the static preview on port 3000. OG image URLs are available in the static preview after building. `bun run analyze` emits Vite sourcemaps for bundle inspection.
 
-The build updates cached LinkCard previews, compiles published MDX through Void, generates RSS / sitemap / OG PNGs, and verifies HTML, navigation data, metadata, assets, and image dimensions. Only verified `dist/client/` output is copied to `out/`. Draft and `_`-prefixed posts are excluded from public MDX imports as well as generated routes. Generated artifacts are ignored by Git.
+The build updates cached LinkCard previews and compiles published MDX through Void. `scripts/build-static.ts` checks that every public route has prerendered HTML and navigation data without loader errors, rejects extra routes, generates RSS / sitemap / OG PNGs, and copies `dist/client/` to `out/`. Draft and `_`-prefixed posts are excluded from public MDX imports as well as generated routes. The MDX registry is passed directly to Vite without an intermediate file. Generated artifacts are ignored by Git.
 
 ## Deployment
 

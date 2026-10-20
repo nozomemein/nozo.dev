@@ -1,5 +1,4 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite-plus";
 
@@ -16,8 +15,10 @@ export function blogContent(): Plugin {
 		},
 		load(id) {
 			if (id !== resolvedId) return;
-			execFileSync("bun", ["scripts/prepare-content.ts"], { cwd: root });
-			return readFileSync(path.join(root, ".void/blog-posts.ts"), "utf8");
+			return execFileSync("bun", ["lib/content/blog/manifest.ts"], {
+				cwd: root,
+				encoding: "utf8",
+			});
 		},
 		configureServer(server) {
 			server.watcher.add(blogDir);

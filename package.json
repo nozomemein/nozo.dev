@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "void prepare && vp dev",
-		"build": "bun run fetch:link-previews && void prepare && vp build && bun scripts/generate-static-assets.ts && bun scripts/finalize-static-build.ts",
+		"build": "bun run fetch:link-previews && void prepare && vp build && bun scripts/build-static.ts",
 		"analyze": "void prepare && vp build --sourcemap",
 		"fetch:link-previews": "bun scripts/fetch-link-previews.ts",
 		"start": "wrangler dev --config .void-wrangler.jsonc --assets out --port 3000",
