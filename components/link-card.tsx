@@ -1,4 +1,4 @@
-import { getCachedLinkPreview } from "@/lib/link-preview/cache";
+import { getCachedLinkPreview } from "@/lib/link-preview/previews";
 import { cn } from "@/lib/utils";
 
 type LinkCardProps = {
@@ -34,7 +34,6 @@ export function LinkCard({ href, className }: LinkCardProps) {
 		>
 			{preview?.image ? (
 				<div className="relative aspect-[1.91/1] w-full shrink-0 overflow-hidden bg-neutral-200 sm:aspect-auto sm:h-auto sm:w-48 dark:bg-neutral-800">
-					{/* biome-ignore lint/performance/noImgElement: external OGP images use remote URLs at build time */}
 					<img
 						src={preview.image}
 						alt=""

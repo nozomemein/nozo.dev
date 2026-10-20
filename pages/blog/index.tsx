@@ -1,35 +1,8 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@void/react";
 import { Badge } from "@/components/ui/badge";
-import { listBlogPostSummaries } from "@/lib/content/blog/mdx";
-import {
-	pageAlternates,
-	pageOpenGraph,
-	pageTwitter,
-} from "@/lib/metadata/page";
-import { config } from "@/lib/site/config";
-import { ogImagePaths } from "@/lib/site/routes";
+import type { Props } from "@/pages/blog/index.server";
 
-const title = "Blog";
-const description = config.site.blogDescription;
-const imagePath = ogImagePaths.blog;
-
-export const metadata: Metadata = {
-	title,
-	description,
-	alternates: pageAlternates("/blog"),
-	openGraph: pageOpenGraph({
-		title,
-		description,
-		path: "/blog",
-		imagePath,
-	}),
-	twitter: pageTwitter(title, description, imagePath),
-};
-
-export default function BlogIndexPage() {
-	const posts = listBlogPostSummaries();
-
+export default function BlogIndexPage({ posts }: Props) {
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 p-6 sm:p-12">
 			<header className="space-y-2">

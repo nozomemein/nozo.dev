@@ -1,11 +1,23 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { ImageResponse } from "next/og";
+import { Resvg } from "@resvg/resvg-js";
+import satori from "satori";
 import { theme } from "@/lib/og-image/theme";
 import { config } from "@/lib/site/config";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+async function renderImage(
+	element: Parameters<typeof satori>[0],
+	options: Parameters<typeof satori>[1],
+) {
+	const svg = await satori(element, options);
+	const png = new Resvg(svg).render().asPng();
+	return new Response(new Uint8Array(png), {
+		headers: { "Content-Type": contentType },
+	});
+}
 
 let fontDataPromise: Promise<ArrayBuffer> | null = null;
 
@@ -42,15 +54,16 @@ export async function createOgImage({ title, footer }: CreateOgImageOptions) {
 	];
 
 	if (!footerText) {
-		return new ImageResponse(
+		return renderImage(
 			<div
 				style={{
 					display: "flex",
 					alignItems: "center",
-					width: "100%",
-					height: "100%",
+					width: size.width,
+					height: size.height,
 					backgroundColor: theme.background,
 					padding: "80px",
+					boxSizing: "border-box",
 				}}
 			>
 				<div
@@ -69,16 +82,17 @@ export async function createOgImage({ title, footer }: CreateOgImageOptions) {
 		);
 	}
 
-	return new ImageResponse(
+	return renderImage(
 		<div
 			style={{
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "space-between",
-				width: "100%",
-				height: "100%",
+				width: size.width,
+				height: size.height,
 				backgroundColor: theme.background,
 				padding: "80px",
+				boxSizing: "border-box",
 			}}
 		>
 			<div

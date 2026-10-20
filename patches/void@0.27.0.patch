@@ -1,0 +1,37 @@
+diff --git a/dist/head-D2VF4ApL.mjs b/dist/head-D2VF4ApL.mjs
+index 234c2cbc8210e6f1fa0894225ef03c83d38922a5..eefedf90190a48dff6b7bb87e5d0c17d9ef5dfd6 100644
+--- a/dist/head-D2VF4ApL.mjs
++++ b/dist/head-D2VF4ApL.mjs
+@@ -23,12 +23,16 @@ function resolveHead(configHead, middlewareHead, pageHead) {
+ 	const metaMap = /* @__PURE__ */ new Map();
+ 	for (const layer of layers) {
+ 		if (!layer?.meta) continue;
++		const layerMeta = new Map();
+ 		for (const entry of layer.meta) {
+ 			const key = entry.charset ? "charset" : entry.property ? `property:${entry.property}` : `name:${entry.name ?? ""}`;
+-			metaMap.set(key, entry);
++			const entries = layerMeta.get(key) ?? [];
++			entries.push(entry);
++			layerMeta.set(key, entries);
+ 		}
++		for (const [key, entries] of layerMeta) metaMap.set(key, entries);
+ 	}
+-	if (metaMap.size > 0) result.meta = [...metaMap.values()];
++	if (metaMap.size > 0) result.meta = [...metaMap.values()].flat();
+ 	const links = layers.flatMap((layer) => layer?.link ?? []);
+ 	if (links.length > 0) result.link = links;
+ 	const scripts = layers.flatMap((layer) => layer?.script ?? []);
+diff --git a/dist/head-client-DzmJGN4C.mjs b/dist/head-client-DzmJGN4C.mjs
+index b4aec75508190bd17674d59891be2d513a6df682..ca8708d68658f8855dab02dd4cf9b5ad59c6719e 100644
+--- a/dist/head-client-DzmJGN4C.mjs
++++ b/dist/head-client-DzmJGN4C.mjs
+@@ -50,8 +50,7 @@ function initClientHead(head) {
+ 	if (head.meta) for (const entry of head.meta) {
+ 		const selector = entry.charset ? "meta[charset]" : entry.property ? `meta[property="${entry.property}"]` : entry.name ? `meta[name="${entry.name}"]` : null;
+ 		if (!selector) continue;
+-		const el = document.head.querySelector(selector);
+-		if (el) el.setAttribute(ATTR, "");
++		for (const el of document.head.querySelectorAll(selector)) el.setAttribute(ATTR, "");
+ 	}
+ 	if (head.link) for (const entry of head.link) {
+ 		const el = document.head.querySelector(`link[rel="${entry.rel}"][href="${entry.href}"]`);

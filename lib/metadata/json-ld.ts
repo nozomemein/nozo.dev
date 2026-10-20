@@ -22,7 +22,7 @@ export function jsonLdScript(data: unknown): string {
  * Build WebSite JSON-LD for the home page.
  * @see https://schema.org/WebSite
  */
-export function webSiteJsonLd(): JsonLd<"WebSite"> {
+export function webSiteJsonLd() {
 	return {
 		"@context": "https://schema.org",
 		"@type": "WebSite",
@@ -39,7 +39,7 @@ export function webSiteJsonLd(): JsonLd<"WebSite"> {
 			"@type": "Person",
 			name: config.site.authorName,
 		},
-	};
+	} satisfies JsonLd<"WebSite">;
 }
 
 export type BlogPostingInput = {

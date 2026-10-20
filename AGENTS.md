@@ -23,19 +23,22 @@ Instructions for AI coding agents working on this repository.
 
 Personal portfolio and blog at [nozo.dev](https://nozo.dev).
 
-- **Next.js 16** (App Router), **React 19**, **TypeScript** (strict)
+- **Void Pages + Vite+**, **React 19**, **TypeScript** (strict)
 - **Tailwind CSS v4**, **MDX**, **Biome**, **Bun**
-- Static export (`output: "export"`) deployed to **Cloudflare Pages** via `wrangler.jsonc` (build output in `out/`)
+- Static generation (`output: "static"`) deployed as **Cloudflare static assets** (deployment settings in `void.config.ts`; verified build output in `out/`)
 
 ```
-content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → next build → out/ → Cloudflare Pages
+content/blog/*.mdx → virtual:blog-posts → pages/blog/[slug].tsx → Vite+ / Void SSG → static assets + verification → out/ → Cloudflare
 ```
 
 ## Repository layout
 
 | Path | Purpose |
 | --- | --- |
-| `app/` | Next.js App Router pages and layout |
+| `pages/` | Void Pages, server loaders, head metadata, and common layout |
+| `styles/globals.css` | Tailwind theme and self-hosted Inter |
+| `vite.config.ts`, `void.config.ts` | Build, SSG, and Cloudflare settings |
+| `patches/void@0.27.0.patch` | Preserve repeated head metadata in Void and manage all SSR tags during navigation |
 | `components/` | UI components (shadcn/ui + typography) |
 | `content/blog/` | MDX blog posts with frontmatter |
 | `content/pages/` | Static MDX pages (e.g. privacy) |
@@ -43,32 +46,32 @@ content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → 
 | `lib/site/routes.ts` | OG image path helpers |
 | `lib/content/blog/schema.ts` | Shared frontmatter validation |
 | `lib/content/blog/files.ts` | Read blog frontmatter from MDX files without importing MDX |
-| `lib/content/blog/mdx.ts` | Blog post loading via MDX import |
-| `lib/metadata/page.ts` | OGP and Twitter metadata helpers |
+| `lib/content/blog/mdx.ts` | Build-time blog discovery and published summaries |
+| `lib/content/blog/manifest.ts`, `plugin.ts` | Published-only MDX registry and development refresh |
+| `scripts/prepare-content.ts` | Generate the registry under `.void/` |
+| `lib/metadata/page.ts`, `head.ts` | Framework-neutral OGP helpers and Void head descriptors |
 | `lib/metadata/blog-posting.ts` | BlogPosting JSON-LD builder |
 | `lib/metadata/json-ld.ts` | Safe JSON-LD serialization |
 | `lib/metadata/sitemap.ts` | Sitemap entry builder |
 | `lib/metadata/feed.ts` | RSS 2.0 feed builder |
 | `lib/link-card/extract-hrefs.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
 | `lib/link-preview/types.ts` | Link preview cache types |
-| `lib/link-preview/cache.ts` | LinkCard OGP preview cache loader |
+| `lib/link-preview/cache.ts` | Filesystem cache access for build scripts |
+| `lib/link-preview/previews.ts` | Browser-safe LinkCard cache import |
 | `lib/link-preview/fetch-policy.ts` | Link preview cache TTL and image URL helpers |
 | `lib/og-image/theme.ts` | Dark theme colors for generated OG images |
-| `lib/og-image/response.tsx` | Shared `ImageResponse` builder for OG images |
-| `app/opengraph-image.tsx` | Home page OG image |
-| `app/blog/opengraph-image.tsx` | Blog index OG image |
-| `app/blog/[slug]/opengraph-image.tsx` | Blog post OG images |
-| `app/privacy/opengraph-image.tsx` | Privacy page OG image |
+| `lib/og-image/response.tsx` | Satori / resvg PNG builder for OG images |
 | `assets/fonts/` | Fonts used by generated OG images |
 | `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
 | `content/generated/link-previews.json` | Cached external link previews |
-| `app/sitemap.ts` | Build-time sitemap generation |
-| `app/feed.xml/route.ts` | Build-time RSS feed generation |
-| `.github/workflows/ci.yml` | CI (Biome check + test + build + zizmor) |
+| `scripts/generate-static-assets.ts` | Build-time OG images, RSS, sitemap, and Cloudflare asset rules |
+| `scripts/finalize-static-build.ts` | Verify prerendered output before publishing it to `out/` |
+| `.github/workflows/ci.yml` | CI (Biome check + typecheck + test + build + zizmor) |
 
 ## Dev environment
 
-- Package manager: **Bun** (`bun install`, lockfile: `bun.lock`)
+- Node.js: **24.21.0** (`.node-version`); required by Void and Vite+.
+- Package manager: **Bun 1.3.14** (`bun install`, lockfile: `bun.lock`)
 - **No npm-style lockfiles:** this repo uses `bun.lock` only. Do not create or commit `package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`. Do not run `npm`, `yarn`, or `pnpm` — use `bun` / `bunx` instead.
 - Install git hooks once: `bunx lefthook install` (see `lefthook.yml`)
 - Pre-commit runs: `bun run check`, `betterleaks`, `zizmor`
@@ -80,11 +83,13 @@ content/blog/*.mdx → lib/content/blog/mdx.ts → app/blog/[slug]/page.tsx → 
 | `bun run dev` | Local dev server |
 | `bun run check` | Lint + format (same as CI) |
 | `bun run check:write` | Auto-fix Biome issues |
+| `bun run typecheck` | Generate Void types and check TypeScript |
 | `bun test` | Run unit tests (same as CI) |
 | `bun run build` | Production static export |
-| `bun run clean` | Remove `.next` and `out` |
+| `bun run start` | Serve the verified `out/` as Cloudflare static assets locally |
+| `bun run clean` | Remove generated build and local runtime state |
 
-Before finishing a task, run `bun run check`, `bun test`, and `bun run build`.
+Before finishing a task, run `bun run check`, `bun run typecheck`, `bun test`, and `bun run build`.
 
 ## Visual verification
 
@@ -94,7 +99,7 @@ After any change that affects appearance (layout, styling, components, typograph
 2. Open the affected page(s) at `http://localhost:3000`
 3. Check both light and dark mode when the change may affect theme styling
 
-For **OG images**, preview the generated image directly after changing `lib/og-image/response.tsx`, `lib/og-image/theme.ts`, route-level `opengraph-image.tsx` files, or blog post titles:
+For **OG images**, preview the generated image directly after changing `lib/og-image/response.tsx`, `lib/og-image/theme.ts`, `scripts/generate-static-assets.ts`, or blog post titles. Run `bun run build` and then `bun run start` (stop the dev server first) to preview the generated files:
 
 - Home: `http://localhost:3000/opengraph-image`
 - Blog index: `http://localhost:3000/blog/opengraph-image`
@@ -102,6 +107,8 @@ For **OG images**, preview the generated image directly after changing `lib/og-i
 - Privacy: `http://localhost:3000/privacy/opengraph-image`
 
 Reload after edits to confirm title text, colors, and layout look correct.
+
+Void documentation for the installed version is available under `node_modules/void/docs/`. Keep filesystem access and MDX discovery in build scripts; browser components use the published-only virtual registry. Do not deploy `dist/ssr` for this static site.
 
 ## Code conventions
 
@@ -119,7 +126,7 @@ Required frontmatter fields: `title`, `description`, `date` (ISO date string).
 
 Optional: `tags`, `status` (`draft` | `published`).
 
-Article OG images are generated at build time by `app/blog/[slug]/opengraph-image.tsx` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
+Article OG images are generated at build time by `scripts/generate-static-assets.ts` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
 
 - Draft posts are excluded from production builds unless `includeDrafts: true`
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored
@@ -149,7 +156,7 @@ Examples:
 - **Commit style:** Conventional Commits in English (e.g. `feat:`, `fix:`, `chore:`)
 - **Do not commit** unless explicitly asked
 - **Do not push** unless explicitly asked
-- **CI must pass:** `bun run check` + `bun test` + `bun run build`
+- **CI must pass:** `bun run check` + `bun run typecheck` + `bun test` + `bun run build`
 - **Link related issues in PRs:** include `Closes #<issue>` (or `Refs #<issue>` when not fully resolving) in the PR description body so GitHub links the PR to the issue
 - **Security:** never commit secrets; pre-commit runs `betterleaks`
 - **Dependencies:** Dependabot with 7-day cooldown for GitHub Actions

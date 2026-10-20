@@ -12,6 +12,11 @@
 # next.js
 /.next/
 /out/
+/.out-*/
+/dist/
+/.void/
+/.wrangler/
+/.void-wrangler.jsonc
 
 # production
 /build
