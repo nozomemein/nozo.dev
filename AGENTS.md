@@ -23,48 +23,7 @@ Instructions for AI coding agents working on this repository.
 
 Personal portfolio and blog at [nozo.dev](https://nozo.dev).
 
-- **Void Pages + Vite+**, **React 19**, **TypeScript** (strict)
-- **Tailwind CSS v4**, **MDX**, **Biome**, **Bun**
-- Static generation (`output: "static"`) deployed as **Cloudflare static assets** (deployment settings in `void.config.ts`; verified build output in `out/`)
-
-```
-content/blog/*.mdx → virtual:blog-posts → pages/blog/[slug].tsx → Vite+ / Void SSG → static assets + verification → out/ → Cloudflare
-```
-
-## Repository layout
-
-| Path | Purpose |
-| --- | --- |
-| `pages/` | Void Pages, server loaders, head metadata, and common layout |
-| `styles/globals.css` | Tailwind theme and self-hosted Inter |
-| `vite.config.ts`, `void.config.ts` | Build, SSG, and Cloudflare settings |
-| `patches/void@0.27.0.patch` | Preserve repeated head metadata in Void and manage all SSR tags during navigation |
-| `components/` | UI components (shadcn/ui + typography) |
-| `content/blog/` | MDX blog posts with frontmatter |
-| `content/pages/` | Static MDX pages (e.g. privacy) |
-| `lib/site/config.ts` | Site config constants |
-| `lib/site/routes.ts` | OG image path helpers |
-| `lib/content/blog/schema.ts` | Shared frontmatter validation |
-| `lib/content/blog/files.ts` | Read blog frontmatter from MDX files without importing MDX |
-| `lib/content/blog/mdx.ts` | Build-time blog discovery and published summaries |
-| `lib/content/blog/manifest.ts`, `plugin.ts` | Published-only MDX registry and development refresh |
-| `lib/metadata/page.ts`, `head.ts` | Framework-neutral OGP helpers and Void head descriptors |
-| `lib/metadata/blog-posting.ts` | BlogPosting JSON-LD builder |
-| `lib/metadata/json-ld.ts` | Safe JSON-LD serialization |
-| `lib/metadata/sitemap.ts` | Sitemap entry builder |
-| `lib/metadata/feed.ts` | RSS 2.0 feed builder |
-| `lib/link-card/extract-hrefs.ts` | Extract `<LinkCard href="...">` URLs from MDX source |
-| `lib/link-preview/types.ts` | Link preview cache types |
-| `lib/link-preview/cache.ts` | Filesystem cache access for build scripts |
-| `lib/link-preview/previews.ts` | Browser-safe LinkCard cache import |
-| `lib/link-preview/fetch-policy.ts` | Link preview cache TTL and image URL helpers |
-| `lib/og-image/theme.ts` | Dark theme colors for generated OG images |
-| `lib/og-image/response.tsx` | Satori / resvg PNG builder for OG images |
-| `assets/fonts/` | Fonts used by generated OG images |
-| `scripts/fetch-link-previews.ts` | Build-time OGP fetch for `<LinkCard>` URLs |
-| `content/generated/link-previews.json` | Cached external link previews |
-| `scripts/build-static.ts` | Check prerendered routes, generate OG / RSS / sitemap / Cloudflare rules, and copy output to `out/` |
-| `.github/workflows/ci.yml` | CI (Biome check + typecheck + test + build + zizmor) |
+See [Development](docs/development.md) for the architecture, repository layout, setup, build pipeline, and deployment commands.
 
 ## Dev environment
 
