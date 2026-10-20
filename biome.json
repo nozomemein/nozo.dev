@@ -1,7 +1,16 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
 	"files": {
-		"includes": ["**", "!**/.next", "!**/out", "!**/node_modules"]
+		"includes": [
+			"**",
+			"!**/.next",
+			"!**/out",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.void",
+			"!**/.wrangler",
+			"!**/.void-wrangler.jsonc"
+		]
 	},
 	"css": {
 		"parser": {
