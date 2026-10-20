@@ -1,9 +1,5 @@
 import path from "node:path";
-import {
-	type BlogPostSummary,
-	listBlogPostSummaries,
-} from "@/lib/content/blog/mdx";
-import { blogDir } from "@/lib/content/blog/paths";
+import type { BlogPostSummary } from "./mdx";
 
 export function blogManifestSource(
 	posts: BlogPostSummary[],
@@ -21,8 +17,4 @@ export function blogManifestSource(
 			`{ slug: ${JSON.stringify(post.slug)}, frontmatter: ${JSON.stringify(post.frontmatter)}, Component: Post${index} }`,
 	);
 	return `${imports.join("\n")}\nexport default [${entries.join(",\n")}];\n`;
-}
-
-if (import.meta.main) {
-	process.stdout.write(blogManifestSource(listBlogPostSummaries(), blogDir));
 }

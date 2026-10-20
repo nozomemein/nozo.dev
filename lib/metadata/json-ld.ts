@@ -47,6 +47,7 @@ export type BlogPostingInput = {
 	description: string;
 	date: string;
 	updatedAt?: string;
+	tags?: string[];
 };
 
 /**
@@ -66,6 +67,7 @@ export function blogPostingJsonLd(
 		description: frontmatter.description,
 		datePublished: frontmatter.date,
 		...(frontmatter.updatedAt && { dateModified: frontmatter.updatedAt }),
+		...(frontmatter.tags?.length && { keywords: frontmatter.tags }),
 		url: `${config.site.prodOrigin}/blog/${slug}`,
 		image: `${config.site.prodOrigin}${ogImagePath}`,
 		author: {

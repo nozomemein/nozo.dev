@@ -6,6 +6,7 @@ import {
 	readStaticPage,
 	staticAssetRules,
 	staticOgImages,
+	verifyOgImage,
 	verifyPrerenderedPages,
 } from "@/scripts/build-static";
 
@@ -38,7 +39,7 @@ describe("staticOgImages", () => {
 });
 
 describe("staticAssetRules", () => {
-	test("rewrites extensionless image URLs and sets image and XML MIME types", () => {
+	test("rewrites extensionless images and overrides only the RSS MIME type", () => {
 		const rules = staticAssetRules([
 			{ path: "/blog/hello/opengraph-image", title: "Hello" },
 		]);
@@ -46,32 +47,42 @@ describe("staticAssetRules", () => {
 		expect(rules.redirects).toBe(
 			"/blog/hello/opengraph-image /blog/hello/opengraph-image.png 200\n",
 		);
-		expect(rules.headers).toContain(
-			"/blog/hello/opengraph-image\n  Content-Type: image/png",
-		);
-		expect(rules.headers).toContain(
-			"/blog/hello/opengraph-image.png\n  Content-Type: image/png",
-		);
-		expect(rules.headers).toContain(
-			"/feed.xml\n  Content-Type: application/rss+xml; charset=utf-8",
-		);
-		expect(rules.headers).toContain(
-			"/sitemap.xml\n  Content-Type: application/xml; charset=utf-8",
+		expect(rules.headers).toBe(
+			"/feed.xml\n  Content-Type: application/rss+xml; charset=utf-8\n",
 		);
 	});
 });
 
 let directory: string;
 
+function pngHeader(width = 1200, height = 630) {
+	const header = Buffer.alloc(24);
+	Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).copy(header);
+	header.write("IHDR", 12, "ascii");
+	header.writeUInt32BE(width, 16);
+	header.writeUInt32BE(height, 20);
+	return header;
+}
+
 beforeEach(async () => {
 	directory = await mkdtemp(path.join(os.tmpdir(), "portfolio-build-"));
+	await writeFile(path.join(directory, "opengraph-image.png"), pngHeader());
+	await writeFile(
+		path.join(directory, "_redirects"),
+		"/opengraph-image /opengraph-image.png 200\n",
+	);
 });
 
 afterEach(async () => {
 	await rm(directory, { recursive: true, force: true });
 });
 
-async function writePage(route: string, errors: unknown = null, body = "Page") {
+async function writePage(
+	route: string,
+	errors: unknown = null,
+	body = "Page",
+	image = "/opengraph-image",
+) {
 	const key = route === "/" ? "index" : route.slice(1);
 	const data = { url: route, errors };
 	await mkdir(path.dirname(path.join(directory, `${key}.html`)), {
@@ -82,7 +93,7 @@ async function writePage(route: string, errors: unknown = null, body = "Page") {
 	});
 	await writeFile(
 		path.join(directory, `${key}.html`),
-		`<html><body><script id="__VOID_PAGE_DATA__" type="application/json">${JSON.stringify(data)}</script><main>${body}</main></body></html>`,
+		`<html><head><meta property="og:image" content="https://nozo.dev${image}"></head><body><script id="__VOID_PAGE_DATA__" type="application/json">${JSON.stringify(data)}</script><main>${body}</main></body></html>`,
 	);
 	await writeFile(
 		path.join(directory, `_void/pages/${key}.json`),
@@ -133,5 +144,30 @@ describe("static prerender verification", () => {
 		await expect(verifyPrerenderedPages(directory, [])).rejects.toThrow(
 			"Unexpected or missing navigation routes",
 		);
+	});
+
+	test("rejects an OG image URL that does not resolve to a generated file", async () => {
+		for (const route of ["/", "/blog", "/privacy", "/404"])
+			await writePage(route);
+		await writePage("/", null, "Home", "/not-generated");
+		await expect(verifyPrerenderedPages(directory, [])).rejects.toThrow(
+			"not-generated",
+		);
+	});
+});
+
+describe("OG image output verification", () => {
+	test("rejects HTML saved in place of a PNG", async () => {
+		const image = path.join(directory, "opengraph-image.png");
+		await writeFile(image, "<!doctype html><main>404</main>");
+		await expect(verifyOgImage(image)).rejects.toThrow("Invalid PNG");
+	});
+
+	test("rejects a PNG with incorrect dimensions", async () => {
+		const image = path.join(directory, "opengraph-image.png");
+		await writeFile(image, pngHeader(600));
+		await expect(verifyOgImage(image)).rejects.toThrow("Wrong PNG width");
+		await writeFile(image, pngHeader(1200, 315));
+		await expect(verifyOgImage(image)).rejects.toThrow("Wrong PNG height");
 	});
 });

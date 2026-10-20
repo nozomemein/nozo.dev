@@ -71,7 +71,7 @@ Void documentation for the installed version is available under `node_modules/vo
 
 - **Formatter/linter:** Biome only (no ESLint/Prettier)
 - **Indentation:** tabs
-- **Imports:** use `@/` path alias (`tsconfig.json`)
+- **Imports:** use `@/` path alias (`tsconfig.json`); the blog modules loaded by `vite.config.ts` use relative imports because Vite loads its config before resolving application aliases
 - **Components:** functional React; shadcn/ui in `components/ui/` (config: `components.json`)
 - **Styling:** Tailwind utility classes; theme via `next-themes`
 - **Scope:** minimal diffs; match surrounding patterns; avoid drive-by refactors
@@ -85,7 +85,7 @@ Optional: `tags`, `status` (`draft` | `published`).
 
 Article OG images are generated at build time by `scripts/build-static.ts` from each post's `title`. Do not add `ogImage` frontmatter or commit static files under `public/og/`.
 
-- Draft posts are excluded from production builds unless `includeDrafts: true`
+- Draft posts are always excluded from the public MDX registry and static routes; `includeDrafts: true` only includes them in metadata discovery results
 - File naming: `content/blog/<slug>.mdx`; files starting with `_` are ignored
 - New posts: Japanese body text; frontmatter `title`/`description` typically Japanese
 

@@ -2,12 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { MDXContent } from "mdx/types";
-import { loadBlogFrontmatter } from "@/lib/content/blog/files";
-import { blogDir } from "@/lib/content/blog/paths";
-import {
-	type BlogFrontmatter,
-	parseBlogFrontmatter,
-} from "@/lib/content/blog/schema";
+import { loadBlogFrontmatter } from "./files";
+import { blogDir } from "./paths";
+import { type BlogFrontmatter, parseBlogFrontmatter } from "./schema";
 
 export type BlogFrontmatterBase = {
 	title: string;

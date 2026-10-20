@@ -2,11 +2,12 @@ import posts from "virtual:blog-posts";
 import { Badge } from "@/components/ui/badge";
 import { blogPostingJsonLd, jsonLdScript } from "@/lib/metadata/json-ld";
 import { DemotedMdxH1 } from "@/mdx-components";
+import NotFound from "@/pages/404";
 import type { Props } from "@/pages/blog/[slug].server";
 
 export default function BlogPostPage({ slug, frontmatter }: Props) {
 	const post = posts.find((post) => post.slug === slug);
-	if (!post) return null;
+	if (!post) return <NotFound />;
 	const Post = post.Component;
 	const jsonLd = blogPostingJsonLd(slug, frontmatter);
 

@@ -1,4 +1,6 @@
+import { pageTitle } from "@/lib/metadata/head";
+
 export const head = () => ({
-	title: "404 | nozo.dev",
+	title: pageTitle("404"),
 	meta: [{ name: "robots", content: "noindex" }],
 });

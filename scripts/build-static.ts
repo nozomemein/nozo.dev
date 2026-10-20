@@ -38,17 +38,10 @@ export function staticAssetRules(images: StaticOgImage[]) {
 	const redirects = images
 		.map((image) => `${image.path} ${image.path}.png 200`)
 		.join("\n");
-	const imageHeaders = images.flatMap((image) =>
-		[image.path, `${image.path}.png`].map(
-			(url) => `${url}\n  Content-Type: image/png`,
-		),
-	);
-	const headers = [
-		"/feed.xml\n  Content-Type: application/rss+xml; charset=utf-8",
-		"/sitemap.xml\n  Content-Type: application/xml; charset=utf-8",
-		...imageHeaders,
-	].join("\n\n");
-	return { redirects: `${redirects}\n`, headers: `${headers}\n` };
+	return {
+		redirects: `${redirects}\n`,
+		headers: "/feed.xml\n  Content-Type: application/rss+xml; charset=utf-8\n",
+	};
 }
 
 export async function generateStaticAssets(outputDir = "dist/client") {
@@ -102,6 +95,21 @@ export async function readStaticPage(directory: string, route: string) {
 		`HTML/navigation payload mismatch for ${route}`,
 	);
 	assert($("main").text().trim(), `Missing prerendered body for ${route}`);
+	return $;
+}
+
+export async function verifyOgImage(filePath: string) {
+	const png = await readFile(filePath);
+	assert(
+		png.length >= 24 &&
+			png
+				.subarray(0, 8)
+				.equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) &&
+			png.toString("ascii", 12, 16) === "IHDR",
+		`Invalid PNG: ${filePath}`,
+	);
+	assert.equal(png.readUInt32BE(16), 1200, `Wrong PNG width: ${filePath}`);
+	assert.equal(png.readUInt32BE(20), 630, `Wrong PNG height: ${filePath}`);
 }
 
 export async function verifyPrerenderedPages(
@@ -133,16 +141,37 @@ export async function verifyPrerenderedPages(
 		keys.map((key) => `_void/pages/${key}.json`).sort(),
 		"Unexpected or missing navigation routes",
 	);
-	for (const route of routes) await readStaticPage(directory, route);
+	const rewrites = new Map(
+		(await readFile(path.join(directory, "_redirects"), "utf8"))
+			.trim()
+			.split("\n")
+			.map((line) => line.trim().split(/\s+/))
+			.filter(([, , status]) => status === "200")
+			.map(([from, to]) => [from, to]),
+	);
+	for (const route of routes) {
+		const $ = await readStaticPage(directory, route);
+		if (route === "/404") continue;
+		const image = $("head meta[property='og:image']").attr("content");
+		assert(image, `Missing OG image for ${route}`);
+		const url = new URL(image);
+		assert.equal(
+			url.origin,
+			config.site.prodOrigin,
+			`Unexpected OG image origin for ${route}`,
+		);
+		const target = rewrites.get(url.pathname) ?? url.pathname;
+		await verifyOgImage(path.join(directory, target));
+	}
 }
 
 if (import.meta.main) {
 	const directory = "dist/client";
+	await generateStaticAssets(directory);
 	await verifyPrerenderedPages(
 		directory,
 		listBlogPostSummaries().map((post) => post.slug),
 	);
-	await generateStaticAssets(directory);
 	await rm("out", { recursive: true, force: true });
 	await cp(directory, "out", { recursive: true });
 }

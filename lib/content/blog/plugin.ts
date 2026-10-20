@@ -1,13 +1,12 @@
-import { execFileSync } from "node:child_process";
-import path from "node:path";
 import type { Plugin } from "vite-plus";
+import { blogManifestSource } from "./manifest";
+import { listBlogPostSummaries } from "./mdx";
+import { blogDir } from "./paths";
 
 const moduleId = "virtual:blog-posts";
 const resolvedId = `\0${moduleId}`;
 
 export function blogContent(): Plugin {
-	const root = process.cwd();
-	const blogDir = path.join(root, "content/blog");
 	return {
 		name: "blog-content",
 		resolveId(id) {
@@ -15,10 +14,7 @@ export function blogContent(): Plugin {
 		},
 		load(id) {
 			if (id !== resolvedId) return;
-			return execFileSync("bun", ["lib/content/blog/manifest.ts"], {
-				cwd: root,
-				encoding: "utf8",
-			});
+			return blogManifestSource(listBlogPostSummaries(), blogDir);
 		},
 		configureServer(server) {
 			server.watcher.add(blogDir);

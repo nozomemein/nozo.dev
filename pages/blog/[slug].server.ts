@@ -25,7 +25,7 @@ export const head = defineHead<Props>((_c, { slug, frontmatter }) =>
 		type: "article",
 		publishedTime: frontmatter.date,
 		modifiedTime: frontmatter.updatedAt,
-		authors: [config.site.authorName],
+		author: config.site.authorName,
 		tags: frontmatter.tags,
 	}),
 );
