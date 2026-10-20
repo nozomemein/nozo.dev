@@ -5,5 +5,24 @@
 		"image": "https://opengraph.githubassets.com/eaae1fde5fb0cd2b9f5dfbf8b57c7e393dec010df52595323bb05744fef10db5/flutter/packages/pull/9868",
 		"siteName": "GitHub",
 		"fetchedAt": "2026-06-23T12:53:14.793Z"
+	},
+	"https://sli.dev/": {
+		"title": "Slidev",
+		"description": "Presentation slides for developers",
+		"image": "https://sli.dev/og-image.png",
+		"fetchedAt": "2026-06-29T20:57:22.531Z"
+	},
+	"https://github.com/nozomemein/slides": {
+		"title": "GitHub - nozomemein/slides",
+		"description": "Contribute to nozomemein/slides development by creating an account on GitHub.",
+		"image": "https://opengraph.githubassets.com/6f11ce6362dbbf7c4a245be763b736af68986e574ee055ff12cd4632274a57c3/nozomemein/slides",
+		"siteName": "GitHub",
+		"fetchedAt": "2026-06-29T21:03:27.870Z"
+	},
+	"https://unocss.dev/": {
+		"title": "UnoCSS",
+		"description": "The instant on-demand Atomic CSS engine",
+		"image": "https://unocss.dev/og.png#1",
+		"fetchedAt": "2026-06-29T21:22:55.222Z"
 	}
 }
