@@ -86,4 +86,17 @@ describe("blogPostingJsonLd", () => {
 
 		expect(jsonLd.dateModified).toBe("2026-02-01");
 	});
+
+	test("preserves all article tags as keywords and omits empty keywords", () => {
+		expect(
+			blogPostingJsonLd("test", { ...frontmatter, tags: ["react", "mdx"] })
+				.keywords,
+		).toEqual(["react", "mdx"]);
+		expect(blogPostingJsonLd("test", frontmatter)).not.toHaveProperty(
+			"keywords",
+		);
+		expect(
+			blogPostingJsonLd("test", { ...frontmatter, tags: [] }),
+		).not.toHaveProperty("keywords");
+	});
 });

@@ -2,12 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { MDXContent } from "mdx/types";
-import { loadBlogFrontmatter } from "@/lib/content/blog/files";
-import { blogDir } from "@/lib/content/blog/paths";
-import {
-	type BlogFrontmatter,
-	parseBlogFrontmatter,
-} from "@/lib/content/blog/schema";
+import { loadBlogFrontmatter } from "./files";
+import { blogDir } from "./paths";
+import { type BlogFrontmatter, parseBlogFrontmatter } from "./schema";
 
 export type BlogFrontmatterBase = {
 	title: string;
@@ -22,23 +19,6 @@ export type BlogPost = {
 	frontmatter: BlogFrontmatter;
 	Component: MDXContent;
 };
-
-type MdxModule = {
-	default: MDXContent;
-	frontmatter?: unknown;
-};
-
-function isMdxModule(value: unknown): value is MdxModule {
-	if (typeof value !== "object" || value === null) {
-		return false;
-	}
-
-	if (!("default" in value)) {
-		return false;
-	}
-
-	return typeof value.default === "function";
-}
 
 function getFrontmatterStatusFromFile(filePath: string) {
 	const raw = fs.readFileSync(filePath, "utf8");
@@ -79,30 +59,6 @@ export function listBlogSlugs(_options?: {
 		);
 		return status !== "draft";
 	});
-}
-
-export async function loadBlogPost(slug: string): Promise<BlogPost> {
-	let loaded: unknown;
-
-	try {
-		loaded = await import(`@/content/blog/${slug}.mdx`);
-	} catch {
-		throw new Error(`Post not found: ${slug}`);
-	}
-
-	if (!isMdxModule(loaded)) {
-		throw new Error(`Missing default export in ${slug}`);
-	}
-
-	const frontmatter = parseBlogFrontmatter(loaded.frontmatter, slug, {
-		missingFrontmatterError: `Missing frontmatter export in ${slug}`,
-	});
-
-	return {
-		slug,
-		frontmatter,
-		Component: loaded.default,
-	};
 }
 
 export function listBlogPostSummaries(options?: {

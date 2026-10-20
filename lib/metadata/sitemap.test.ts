@@ -1,7 +1,39 @@
 import { describe, expect, test } from "bun:test";
-import { sitemapEntries } from "@/lib/metadata/sitemap";
+import { buildSitemap, sitemapEntries } from "@/lib/metadata/sitemap";
 
 const origin = "https://nozo.dev";
+
+describe("buildSitemap", () => {
+	test("serializes sitemap XML with escaped URLs and optional lastmod", () => {
+		const xml = buildSitemap(origin, [
+			{
+				slug: "hello&world",
+				frontmatter: {
+					title: "Hello",
+					description: "Test",
+					date: "2026-02-04",
+					updatedAt: "2026-03-01",
+				},
+			},
+		]);
+
+		expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
+		expect(xml).toContain(
+			'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+		);
+		expect(xml).toContain("<url><loc>https://nozo.dev/</loc></url>");
+		expect(xml).toContain(
+			"<url><loc>https://nozo.dev/blog/hello&amp;world</loc><lastmod>2026-03-01</lastmod></url>",
+		);
+	});
+
+	test("includes only static routes when no posts are published", () => {
+		const xml = buildSitemap(origin, []);
+
+		expect(xml.match(/<url>/g)).toHaveLength(3);
+		expect(xml).not.toContain("<lastmod>");
+	});
+});
 
 describe("sitemapEntries", () => {
 	test("includes static routes and post URLs", () => {

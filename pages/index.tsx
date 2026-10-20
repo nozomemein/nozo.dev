@@ -1,31 +1,6 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@void/react";
 import { TypographyH1, TypographyP } from "@/components/typography";
 import { jsonLdScript, webSiteJsonLd } from "@/lib/metadata/json-ld";
-import {
-	pageAlternates,
-	pageOpenGraph,
-	pageTwitter,
-} from "@/lib/metadata/page";
-import { config } from "@/lib/site/config";
-import { ogImagePaths } from "@/lib/site/routes";
-
-const title = config.site.name;
-const description = config.site.homeDescription;
-const imagePath = ogImagePaths.home;
-
-export const metadata: Metadata = {
-	title,
-	description,
-	alternates: pageAlternates("/"),
-	openGraph: pageOpenGraph({
-		title,
-		description,
-		path: "/",
-		imagePath,
-	}),
-	twitter: pageTwitter(title, description, imagePath),
-};
 
 export default function Home() {
 	const jsonLd = webSiteJsonLd();

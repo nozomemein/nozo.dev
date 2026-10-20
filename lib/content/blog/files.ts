@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { blogDir } from "@/lib/content/blog/paths";
-import { parseBlogFrontmatter } from "@/lib/content/blog/schema";
+import { blogDir } from "./paths";
+import { parseBlogFrontmatter } from "./schema";
 
 export function loadBlogFrontmatter(
 	slug: string,
